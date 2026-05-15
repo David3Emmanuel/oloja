@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Role, ExperienceLevel } from "@/components/onboarding/types";
+import { Role, ExperienceLevel, JobType, WorkType } from "@/components/onboarding/types";
 import { WelcomeStep } from "@/components/onboarding/WelcomeStep";
+import { AuthStep } from "@/components/onboarding/AuthStep";
+import { ConfirmationStep } from "@/components/onboarding/ConfirmationStep";
 import { RoleStep } from "@/components/onboarding/RoleStep";
 import { PersonalInfoStep } from "@/components/onboarding/PersonalInfoStep";
 import { SkillsStep } from "@/components/onboarding/SkillsStep";
@@ -18,6 +20,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 const steps = [
   "Welcome",
+  "Auth",
+  "Confirmation",
   "Role",
   "PersonalInfo",
   "Skills",
@@ -34,11 +38,15 @@ export default function AppFlow() {
   // State for forms
   const [role, setRole] = useState<Role>(null);
   const [name, setName] = useState("");
+  const [brandName, setBrandName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const [languages, setLanguages] = useState<string[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
   const [experience, setExperience] = useState<ExperienceLevel>(null);
+  const [jobType, setJobType] = useState<JobType>(null);
+  const [workType, setWorkType] = useState<WorkType>(null);
+  const [workDistance, setWorkDistance] = useState("");
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -47,7 +55,7 @@ export default function AppFlow() {
   };
 
   const handleOnboardingComplete = () => {
-    console.log({ role, name, phone, location, languages, skills, experience });
+    console.log({ role, name, brandName, phone, location, languages, skills, experience, jobType, workType, workDistance });
     setCurrentView("wallet_success");
   };
 
@@ -89,11 +97,15 @@ export default function AppFlow() {
                   className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden no-scrollbar w-full max-w-md mx-auto"
                 >
                   {currentStep === 0 && <WelcomeStep onNext={nextStep} />}
-                  {currentStep === 1 && <RoleStep role={role} setRole={setRole} onNext={nextStep} />}
-                  {currentStep === 2 && (
+                  {currentStep === 1 && <AuthStep onNext={nextStep} />}
+                  {currentStep === 2 && <ConfirmationStep onNext={nextStep} />}
+                  {currentStep === 3 && <RoleStep role={role} setRole={setRole} onNext={nextStep} />}
+                  {currentStep === 4 && (
                     <PersonalInfoStep
                       name={name}
                       setName={setName}
+                      brandName={brandName}
+                      setBrandName={setBrandName}
                       phone={phone}
                       setPhone={setPhone}
                       location={location}
@@ -101,7 +113,7 @@ export default function AppFlow() {
                       onNext={nextStep}
                     />
                   )}
-                  {currentStep === 3 && (
+                  {currentStep === 5 && (
                     <SkillsStep
                       languages={languages}
                       setLanguages={setLanguages}
@@ -110,10 +122,16 @@ export default function AppFlow() {
                       onNext={nextStep}
                     />
                   )}
-                  {currentStep === 4 && (
+                  {currentStep === 6 && (
                     <ExperienceStep
                       experience={experience}
                       setExperience={setExperience}
+                      jobType={jobType}
+                      setJobType={setJobType}
+                      workType={workType}
+                      setWorkType={setWorkType}
+                      workDistance={workDistance}
+                      setWorkDistance={setWorkDistance}
                       onComplete={handleOnboardingComplete}
                     />
                   )}

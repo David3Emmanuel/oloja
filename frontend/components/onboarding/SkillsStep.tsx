@@ -1,63 +1,83 @@
 import React from "react";
-import { ArrowRight, Globe, Briefcase, Scissors, ChefHat, Sparkles, Car, Wrench, Paintbrush, Zap, Hammer, ShoppingBag, Camera, Package, GraduationCap, Flame, UtensilsCrossed, MoreHorizontal } from "lucide-react";
-import { PaginationDots } from "./PaginationDots";
-import { TopProgressBar } from "./TopProgressBar";
+import { ArrowRight, Globe, Briefcase, Scissors, ChefHat, Sparkles, Car, Wrench, Paintbrush, Zap, Hammer, Camera, ShoppingBag, Truck, GraduationCap, Flame, Utensils, Box } from "lucide-react";
 
 interface SkillsStepProps {
   languages: string[];
-  setLanguages: React.Dispatch<React.SetStateAction<string[]>>;
+  setLanguages: (langs: string[]) => void;
   skills: string[];
-  setSkills: React.Dispatch<React.SetStateAction<string[]>>;
+  setSkills: (skills: string[]) => void;
   onNext: () => void;
 }
 
-const AVAILABLE_SKILLS = [
-  { name: "Tailoring", icon: Scissors },
-  { name: "Cooking", icon: ChefHat },
-  { name: "Cleaning", icon: Sparkles },
-  { name: "Driving", icon: Car },
-  { name: "Plumbing", icon: Wrench },
-  { name: "Painting", icon: Paintbrush },
-  { name: "Electrical Work", icon: Zap },
-  { name: "Carpentry", icon: Hammer },
-  { name: "Hair Styling", icon: Scissors },
-  { name: "Sales", icon: ShoppingBag },
-  { name: "Makeup", icon: Sparkles },
-  { name: "Photography", icon: Camera },
-  { name: "Delivery", icon: Package },
-  { name: "Teaching", icon: GraduationCap },
-  { name: "Welding", icon: Flame },
-  { name: "Catering", icon: UtensilsCrossed },
-  { name: "Other", icon: MoreHorizontal },
-];
+export function SkillsStep({
+  languages, setLanguages, skills, setSkills, onNext
+}: SkillsStepProps) {
+  const toggleLanguage = (lang: string) => {
+    if (languages.includes(lang)) {
+      setLanguages(languages.filter((l) => l !== lang));
+    } else {
+      setLanguages([...languages, lang]);
+    }
+  };
 
-export function SkillsStep({ languages, setLanguages, skills, setSkills, onNext }: SkillsStepProps) {
+  const toggleSkill = (skill: string) => {
+    if (skills.includes(skill)) {
+      setSkills(skills.filter((s) => s !== skill));
+    } else {
+      setSkills([...skills, skill]);
+    }
+  };
+
+  const availableLanguages = ["English", "Yoruba", "Igbo", "Hausa", "Pidgin"];
+  
+  const availableSkills = [
+    { name: "Tailoring", icon: <Scissors className="w-4 h-4" /> },
+    { name: "Cooking", icon: <ChefHat className="w-4 h-4" /> },
+    { name: "Cleaning", icon: <Sparkles className="w-4 h-4" /> },
+    { name: "Driving", icon: <Car className="w-4 h-4" /> },
+    { name: "Plumbing", icon: <Wrench className="w-4 h-4" /> },
+    { name: "Painting", icon: <Paintbrush className="w-4 h-4" /> },
+    { name: "Electrical Work", icon: <Zap className="w-4 h-4" /> },
+    { name: "Carpentry", icon: <Hammer className="w-4 h-4" /> },
+    { name: "Hair Styling", icon: <Scissors className="w-4 h-4" /> },
+    { name: "Sales", icon: <ShoppingBag className="w-4 h-4" /> },
+    { name: "Makeup", icon: <Sparkles className="w-4 h-4" /> },
+    { name: "Photography", icon: <Camera className="w-4 h-4" /> },
+    { name: "Delivery", icon: <Truck className="w-4 h-4" /> },
+    { name: "Teaching", icon: <GraduationCap className="w-4 h-4" /> },
+    { name: "Welding", icon: <Flame className="w-4 h-4" /> },
+    { name: "Catering", icon: <Utensils className="w-4 h-4" /> },
+    { name: "Other", icon: <Box className="w-4 h-4" /> },
+  ];
+
   return (
     <div className="flex-1 flex flex-col px-6 py-12">
-      <div className="mb-6">
-        <TopProgressBar step={2} />
+      <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 tracking-tight">Tell us about your skills</h1>
         <p className="text-zinc-500 dark:text-zinc-400">Select all the skills you have experience with</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto pr-2 -mr-2 no-scrollbar pb-10">
-        <div className="mb-8">
-          <label className="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-4">
-            <Globe className="w-4 h-4 text-[#8b5cf6]" /> Preferred Language
+      <div className="flex gap-1 mb-8">
+        <div className="h-1 flex-1 bg-[#8b5cf6] rounded-full" />
+        <div className="h-1 flex-1 bg-[#8b5cf6] rounded-full" />
+        <div className="h-1 flex-1 bg-zinc-200 dark:bg-zinc-800 rounded-full" />
+      </div>
+
+      <div className="space-y-8 flex-1">
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium mb-4 text-zinc-800 dark:text-zinc-200">
+            <Globe className="w-4 h-4 text-[#8b5cf6]" />
+            Preferred Language
           </label>
           <div className="flex flex-wrap gap-3">
-            {["English", "Yoruba", "Igbo", "Hausa", "Pidgin"].map((lang) => (
+            {availableLanguages.map((lang) => (
               <button
                 key={lang}
-                onClick={() => {
-                  setLanguages((prev) =>
-                    prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
-                  );
-                }}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                onClick={() => toggleLanguage(lang)}
+                className={`px-6 py-3 rounded-xl border text-sm font-medium transition-all ${
                   languages.includes(lang)
-                    ? "bg-[#8b5cf6]/20 text-white border border-[#8b5cf6]/50"
-                    : "bg-zinc-50 dark:bg-[#18181b] text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-700"
+                    ? "bg-[#8b5cf6]/20 border-[#8b5cf6] text-zinc-900 dark:text-white"
+                    : "bg-zinc-50 dark:bg-[#18181b] border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700"
                 }`}
               >
                 {lang}
@@ -67,51 +87,43 @@ export function SkillsStep({ languages, setLanguages, skills, setSkills, onNext 
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-4">
-            <Briefcase className="w-4 h-4 text-[#8b5cf6]" /> Your Skills
+          <label className="flex items-center gap-2 text-sm font-medium mb-4 text-zinc-800 dark:text-zinc-200">
+            <Briefcase className="w-4 h-4 text-[#8b5cf6]" />
+            Your Skills
           </label>
           <div className="flex flex-wrap gap-3">
-            {AVAILABLE_SKILLS.map((skill, index) => {
-              const Icon = skill.icon;
-              const isSelected = skills.includes(skill.name);
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setSkills((prev) =>
-                      prev.includes(skill.name)
-                        ? prev.filter((s) => s !== skill.name)
-                        : [...prev, skill.name]
-                    );
-                  }}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    isSelected
-                      ? "bg-[#8b5cf6]/20 text-white border border-[#8b5cf6]/50"
-                      : "bg-zinc-50 dark:bg-[#18181b] text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-700"
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isSelected ? "text-[#8b5cf6]" : "text-zinc-500"}`} />
-                  {skill.name}
-                </button>
-              );
-            })}
+            {availableSkills.map((skill) => (
+              <button
+                key={skill.name}
+                onClick={() => toggleSkill(skill.name)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
+                  skills.includes(skill.name)
+                    ? "bg-[#8b5cf6]/20 border-[#8b5cf6] text-zinc-900 dark:text-white"
+                    : "bg-zinc-50 dark:bg-[#18181b] border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700"
+                }`}
+              >
+                <span className={`${skills.includes(skill.name) ? 'text-[#8b5cf6]' : 'text-zinc-400'}`}>
+                  {skill.icon}
+                </span>
+                {skill.name}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="mt-4 pt-4 bg-white dark:bg-[#09090b] relative z-10">
+      <div className="mt-8 pt-4">
         <button
           onClick={onNext}
-          disabled={skills.length === 0}
-          className={`w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all ${
-            skills.length > 0
-              ? "bg-zinc-50 dark:bg-[#18181b] text-zinc-900 dark:text-white hover:bg-zinc-200 dark:bg-zinc-800 active:scale-[0.98]"
-              : "bg-zinc-50 dark:bg-[#18181b]/50 text-zinc-600 cursor-not-allowed"
-          }`}
+          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 active:scale-[0.98]"
         >
           Continue <ArrowRight className="w-5 h-5" />
         </button>
-        <PaginationDots total={3} current={1} />
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+          <div className="w-6 h-1.5 rounded-full bg-[#8b5cf6]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+        </div>
       </div>
     </div>
   );
