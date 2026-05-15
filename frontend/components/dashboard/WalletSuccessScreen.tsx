@@ -83,7 +83,7 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#09090b] via-[#09090b] to-transparent pt-12">
+      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white dark:from-[#09090b] dark:via-[#09090b] to-transparent pt-12">
         <button
           onClick={onContinue}
           className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-4 rounded-xl font-medium text-lg transition-all active:scale-[0.98] mb-4"

@@ -17,9 +17,9 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-32 lg:pb-8 no-scrollbar w-full max-w-7xl mx-auto">
-        <div className="flex justify-between items-start mb-1">
+        <div className="flex flex-wrap justify-between items-start gap-4 mb-1">
           <h2 className="text-2xl font-bold">Fashion Designer</h2>
-          <div className="bg-emerald-500/10 text-emerald-500 px-2.5 py-1 rounded border border-emerald-500/20 text-xs font-medium">
+          <div className="bg-emerald-500/10 text-emerald-500 px-2.5 py-1 rounded border border-emerald-500/20 text-xs font-medium shrink-0">
             95% Match
           </div>
         </div>
@@ -34,9 +34,9 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
                 <div className="w-6 h-6 bg-[#8b5cf6] rounded-md flex items-center justify-center text-white text-[10px] font-bold">A</div>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start mb-1">
+                <div className="flex flex-wrap justify-between items-start gap-2 mb-1">
                   <h3 className="font-semibold truncate">Alaro Fashion House</h3>
-                  <div className="flex items-center gap-1 text-[10px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">
+                  <div className="flex items-center gap-1 text-[10px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap shrink-0">
                     <ShieldCheck className="w-3 h-3" /> Verified
                   </div>
                 </div>

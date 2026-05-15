@@ -1,14 +1,14 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Home, Briefcase, Wallet, Shield, User, X } from "lucide-react";
+import Link from "next/link";
 
 interface MenuDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigate: (view: string) => void;
 }
 
-export function MenuDrawer({ isOpen, onClose, onNavigate }: MenuDrawerProps) {
+export function MenuDrawer({ isOpen, onClose }: MenuDrawerProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -37,27 +37,32 @@ export function MenuDrawer({ isOpen, onClose, onNavigate }: MenuDrawerProps) {
               <MenuItem
                 icon={<Home className="w-5 h-5" />}
                 label="Home"
-                onClick={() => { onNavigate("dashboard"); onClose(); }}
+                href="/dashboard"
+                onClick={onClose}
               />
               <MenuItem
                 icon={<Briefcase className="w-5 h-5" />}
                 label="Opportunities"
-                onClick={() => { onClose(); }}
+                href="/opportunities"
+                onClick={onClose}
               />
               <MenuItem
                 icon={<Wallet className="w-5 h-5" />}
                 label="Wallet"
-                onClick={() => { onNavigate("wallet"); onClose(); }}
+                href="/wallet"
+                onClick={onClose}
               />
               <MenuItem
                 icon={<Shield className="w-5 h-5" />}
                 label="Trust"
-                onClick={() => { onClose(); }}
+                href="/trust"
+                onClick={onClose}
               />
               <MenuItem
                 icon={<User className="w-5 h-5" />}
                 label="Profile"
-                onClick={() => { onClose(); }}
+                href="/profile"
+                onClick={onClose}
               />
             </div>
           </motion.div>
@@ -67,14 +72,15 @@ export function MenuDrawer({ isOpen, onClose, onNavigate }: MenuDrawerProps) {
   );
 }
 
-function MenuItem({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
+function MenuItem({ icon, label, href, onClick }: { icon: React.ReactNode; label: string; href: string; onClick?: () => void }) {
   return (
-    <button
+    <Link
+      href={href}
       onClick={onClick}
       className="w-full flex items-center gap-4 px-6 py-4 text-left text-zinc-900 dark:text-white hover:bg-zinc-200 dark:bg-zinc-800/50 transition-colors"
     >
       <div className="text-[#8b5cf6]">{icon}</div>
       <span className="font-medium text-lg">{label}</span>
-    </button>
+    </Link>
   );
 }
