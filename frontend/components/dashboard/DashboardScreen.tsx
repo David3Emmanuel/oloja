@@ -27,84 +27,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Left Column */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* AI Opportunities */}
-            <div>
-              <div className="flex justify-between items-end mb-4">
-                <h2 className="text-lg font-bold">AI Recommended Opportunities</h2>
-                <button className="text-[#8b5cf6] text-sm flex items-center hover:underline">
-                  See all <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <JobCard
-                  title="Fashion Designer"
-                  company="Alaro Fashion House"
-                  match="95%"
-                  distance="2.3 km"
-                  duration="6 months"
-                  pay="₦45,000/week"
-                  onClick={() => onViewJob("job-1")}
-                />
-                <JobCard
-                  title="Textile Specialist"
-                  company="Balogun Textiles"
-                  match="88%"
-                  distance="5.7 km"
-                  duration="3 months"
-                  pay="₦38,000/week"
-                  onClick={() => onViewJob("job-2")}
-                />
-                {/* Additional empty slots for extra wide screens could go here, handled by grid */}
-              </div>
-            </div>
-            
-            <div className="hidden lg:grid grid-cols-2 gap-6">
-              {/* Financial Growth (Desktop moved here for balance) */}
-              <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <TrendingUp className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">Financial Growth</h3>
-                    <p className="text-zinc-500 dark:text-zinc-400 text-xs">Your earning potential</p>
-                  </div>
-                </div>
-                <div className="flex justify-between items-end mb-3">
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">Estimated Monthly</span>
-                  <span className="text-lg font-bold text-emerald-500">₦187,000</span>
-                </div>
-                <div className="flex justify-between items-end">
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">With matched jobs</span>
-                  <span className="text-sm font-medium text-[#8b5cf6]">+42%</span>
-                </div>
-              </div>
-
-              {/* Savings (Desktop moved here for balance) */}
-              <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <PiggyBank className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">Savings Eligibility</h3>
-                  </div>
-                </div>
-                <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-4 leading-relaxed">
-                  Complete 2 more jobs to unlock savings account with 8% annual interest
-                </p>
-                <div className="flex gap-1 mb-2">
-                  <div className="h-1.5 flex-[3] bg-emerald-500 rounded-full"></div>
-                  <div className="h-1.5 flex-[2] bg-zinc-200 dark:bg-zinc-800 rounded-full"></div>
-                </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">60% complete</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Sidebar Column */}
+          {/* Left Column: Wallet & Stats (First thing user sees) */}
           <div className="lg:col-span-4 space-y-6">
             {/* Wallet Card */}
             <button 
@@ -141,50 +64,80 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
               </div>
             </div>
 
-            {/* Mobile-only view for Financial Growth and Savings since they moved to the left col on desktop */}
-            <div className="lg:hidden space-y-6">
-              {/* Financial Growth */}
-              <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <TrendingUp className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">Financial Growth</h3>
-                    <p className="text-zinc-500 dark:text-zinc-400 text-xs">Your earning potential</p>
-                  </div>
+            {/* Financial Growth */}
+            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                  <TrendingUp className="w-5 h-5" />
                 </div>
-                <div className="flex justify-between items-end mb-3">
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">Estimated Monthly</span>
-                  <span className="text-lg font-bold text-emerald-500">₦187,000</span>
-                </div>
-                <div className="flex justify-between items-end">
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">With matched jobs</span>
-                  <span className="text-sm font-medium text-[#8b5cf6]">+42%</span>
+                <div>
+                  <h3 className="font-semibold text-sm">Financial Growth</h3>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-xs">Your earning potential</p>
                 </div>
               </div>
-
-              {/* Savings */}
-              <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <PiggyBank className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">Savings Eligibility</h3>
-                  </div>
-                </div>
-                <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-4 leading-relaxed">
-                  Complete 2 more jobs to unlock savings account with 8% annual interest
-                </p>
-                <div className="flex gap-1 mb-2">
-                  <div className="h-1.5 flex-[3] bg-emerald-500 rounded-full"></div>
-                  <div className="h-1.5 flex-[2] bg-zinc-200 dark:bg-zinc-800 rounded-full"></div>
-                </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">60% complete</div>
+              <div className="flex justify-between items-end mb-3">
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">Estimated Monthly</span>
+                <span className="text-lg font-bold text-emerald-500">₦187,000</span>
+              </div>
+              <div className="flex justify-between items-end">
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">With matched jobs</span>
+                <span className="text-sm font-medium text-[#8b5cf6]">+42%</span>
               </div>
             </div>
 
+            {/* Savings Eligibility */}
+            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                  <PiggyBank className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Savings Eligibility</h3>
+                </div>
+              </div>
+              <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-4 leading-relaxed">
+                Complete 2 more jobs to unlock savings account with 8% annual interest
+              </p>
+              <div className="flex gap-1 mb-2">
+                <div className="h-1.5 flex-[3] bg-emerald-500 rounded-full"></div>
+                <div className="h-1.5 flex-[2] bg-zinc-200 dark:bg-zinc-800 rounded-full"></div>
+              </div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">60% complete</div>
+            </div>
+          </div>
+
+          {/* Right Column: Opportunities */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* AI Opportunities */}
+            <div>
+              <div className="flex justify-between items-end mb-4">
+                <h2 className="text-lg font-bold">AI Recommended Opportunities</h2>
+                <button className="text-[#8b5cf6] text-sm flex items-center hover:underline">
+                  See all <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <JobCard
+                  title="Fashion Designer"
+                  company="Alaro Fashion House"
+                  match="95%"
+                  distance="2.3 km"
+                  duration="6 months"
+                  pay="₦45,000/week"
+                  onClick={() => onViewJob("job-1")}
+                />
+                <JobCard
+                  title="Textile Specialist"
+                  company="Balogun Textiles"
+                  match="88%"
+                  distance="5.7 km"
+                  duration="3 months"
+                  pay="₦38,000/week"
+                  onClick={() => onViewJob("job-2")}
+                />
+                {/* Additional empty slots for extra wide screens could go here, handled by grid */}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -214,14 +167,14 @@ function JobCard({ title, company, match, distance, duration, pay, onClick }: Jo
           {match} Match
         </div>
       </div>
-      <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400 mb-4">
-        <div className="flex items-center gap-1">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+        <div className="flex items-center gap-1 shrink-0">
           <MapPin className="w-3 h-3" /> {distance}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <Clock className="w-3 h-3" /> {duration}
         </div>
-        <div className="flex items-center gap-1 text-[#8b5cf6]">
+        <div className="flex items-center gap-1 text-[#8b5cf6] shrink-0">
           <TrendingUp className="w-3 h-3" /> {pay}
         </div>
       </div>

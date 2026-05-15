@@ -17,6 +17,7 @@ import { WalletScreen } from "@/components/dashboard/WalletScreen";
 import { JobDetailsScreen } from "@/components/dashboard/JobDetailsScreen";
 import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useRouter } from "next/navigation";
 
 const steps = [
   "Welcome",
@@ -28,12 +29,13 @@ const steps = [
   "Experience",
 ];
 
-type ViewState = "onboarding" | "wallet_success" | "dashboard" | "wallet" | "job_details";
+type ViewState = "onboarding" | "wallet_success" | "dashboard" | "wallet" | "job_details" | "opportunities" | "trust" | "profile";
 
 export default function AppFlow() {
   const [currentView, setCurrentView] = useState<ViewState>("onboarding");
   const [currentStep, setCurrentStep] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useRouter();
 
   // State for forms
   const [role, setRole] = useState<Role>(null);
@@ -166,7 +168,7 @@ export default function AppFlow() {
             >
               <DashboardScreen
                 onOpenMenu={() => setIsMenuOpen(true)}
-                onViewWallet={() => setCurrentView("wallet")}
+                onViewWallet={() => navigate.push("/wallet")}
                 onViewJob={() => setCurrentView("job_details")}
               />
             </motion.div>
@@ -205,7 +207,6 @@ export default function AppFlow() {
         <MenuDrawer 
           isOpen={isMenuOpen} 
           onClose={() => setIsMenuOpen(false)} 
-          onNavigate={(view) => setCurrentView(view as ViewState)} 
         />
       </div>
 
