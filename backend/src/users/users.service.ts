@@ -19,7 +19,7 @@ export class UsersService {
       bvn: dto.bvn,
     })
 
-    const va = squadAccount.data ?? {}
+    const va = (squadAccount?.data ?? {}) as Record<string, unknown>
     const user = await this.prisma.user.create({
       data: {
         id: `USR-${Date.now()}`,
@@ -36,15 +36,26 @@ export class UsersService {
         jobType: dto.jobType,
         workType: dto.workType,
         workDistance: dto.workDistance,
-        accountNumber: (va as Record<string, string>).account_number ?? null,
-        bankName: (va as Record<string, string>).bank_name ?? null,
+        accountNumber: String(va.account_number ?? ''),
+        bankName: String(va.bank_name ?? ''),
         accountName: `${dto.firstName} ${dto.lastName}`,
         trustScore: 0,
       },
     })
 
     return {
-      ...user,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      skills: user.skills,
+      languages: user.languages,
+      location: user.location,
+      experience: user.experience,
+      trustScore: user.trustScore,
+      createdAt: user.createdAt.toISOString(),
       virtualAccount: {
         accountNumber: user.accountNumber,
         bankName: user.bankName,

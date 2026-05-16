@@ -49,5 +49,5 @@ export class OnboardUserResponseDto {
   trustScore: number
 
   @ApiProperty({ example: '2024-05-16T10:00:00.000Z' })
-  createdAt: Date
+  createdAt: string
 }
