@@ -48,7 +48,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
     fetchTrustScore();
   }, [user]);
 
-  // Fetch matched opportunities using the user's profile data
+  // Fetch matched opportunities using the user's profile data, fallback to dummy data
   useEffect(() => {
     const fetchOpportunities = async () => {
       setIsLoadingOpps(true);
@@ -61,9 +61,19 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
         const res = await fetch(`${API_BASE}/api/opportunities/match?${queryParams}`);
         if (!res.ok) throw new Error('Failed to fetch opportunities');
         const data = await res.json();
-        setOpportunities(data.matches || []);
+        const matches = data.matches || [];
+        if (matches.length > 0) {
+          setOpportunities(matches);
+        } else {
+          // Simulate a small delay for dummy data
+          const { DUMMY_OPPORTUNITIES } = await import("@/data/dummyOpportunities");
+          setOpportunities(DUMMY_OPPORTUNITIES as any[]);
+        }
       } catch (err) {
         console.error(err);
+        // Fallback to dummy data on error
+        const { DUMMY_OPPORTUNITIES } = await import("@/data/dummyOpportunities");
+        setOpportunities(DUMMY_OPPORTUNITIES as any[]);
       } finally {
         setIsLoadingOpps(false);
       }
