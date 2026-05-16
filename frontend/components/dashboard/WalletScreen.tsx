@@ -1,17 +1,22 @@
-import React from "react";
-import { ArrowLeft, Eye, Download, Send, Plus, PiggyBank, BarChart3, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2 } from "lucide-react";
+import React, { useState } from "react";
+import { Menu, Eye, Download, Send, Plus, PiggyBank, BarChart3, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, EyeOff } from "lucide-react";
 
 interface WalletScreenProps {
-  onBack: () => void;
+  onOpenMenu: () => void;
 }
 
-export function WalletScreen({ onBack }: WalletScreenProps) {
+export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
+  const [showWalletAmount, setShowWalletAmount] = useState(false);
+
+  const handleShowWalletAmount = () => {
+    setShowWalletAmount(prev => !prev);
+  };
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100">
+    <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100 relative overflow-x-hidden">
       {/* Header */}
-      <header className="flex items-center gap-4 p-6 pb-4">
-        <button onClick={onBack} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
-          <ArrowLeft className="w-6 h-6" />
+      <header className="flex items-center p-6 pb-2 w-full">
+        <button onClick={onOpenMenu} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors shrink-0">
+          <Menu className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold flex-1 text-center pr-8">My Wallet</h1>
       </header>
@@ -22,12 +27,12 @@ export function WalletScreen({ onBack }: WalletScreenProps) {
         <div className="bg-[#8b5cf6] rounded-[24px] p-6 relative overflow-hidden flex flex-col justify-between min-h-[220px]">
           <div className="flex justify-between items-start mb-4 relative z-10">
             <span className="text-white/80 text-sm font-medium">Available Balance</span>
-            <button className="text-white/80 hover:text-white transition-colors">
-              <Eye className="w-5 h-5" />
+            <button onClick={handleShowWalletAmount} className="text-white/80 hover:text-white transition-colors">
+              {showWalletAmount ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
           <div className="text-[38px] leading-none font-bold tracking-tight mb-8 relative z-10 text-white">
-            ₦12,450.00
+            {showWalletAmount ? '₦12,450.00' : '**********'}
           </div>
           
           <div className="flex gap-3 relative z-10">

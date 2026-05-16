@@ -16,7 +16,7 @@ export default function DashboardPage() {
           <DashboardScreen
             onOpenMenu={() => setIsMenuOpen(true)}
             onViewWallet={() => router.push("/wallet")}
-            onViewJob={(id) => router.push("/opportunities")}
+            onViewJob={(id) => router.push(`/opportunities/${id}`)}
           />
         </div>
         <MenuDrawer 
