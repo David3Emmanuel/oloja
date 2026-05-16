@@ -7,5 +7,6 @@ import { SquadModule } from '../squad/squad.module'
   imports: [SquadModule],
   providers: [UsersService],
   controllers: [UsersController],
+  exports: [UsersService],
 })
 export class UsersModule {}

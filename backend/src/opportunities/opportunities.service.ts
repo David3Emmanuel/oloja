@@ -1,16 +1,22 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { MatchingService } from '../ai/matching.service'
+import { UsersService } from '../users/users.service'
 import { SEED_OPPORTUNITIES } from './opportunities.seed'
 
 @Injectable()
 export class OpportunitiesService {
-  constructor(private readonly matching: MatchingService) {}
+  constructor(
+    private readonly matching: MatchingService,
+    private readonly users: UsersService,
+  ) {}
 
-  async match(skills: string[], location: string, languages: string[]) {
+  async match(userId: string) {
+    const user = await this.users.findById(userId)
+    if (!user) throw new NotFoundException(`User ${userId} not found`)
     const matches = await this.matching.match(
-      skills,
-      location,
-      languages,
+      user.skills,
+      user.location,
+      user.languages,
       SEED_OPPORTUNITIES,
     )
     return { matches }

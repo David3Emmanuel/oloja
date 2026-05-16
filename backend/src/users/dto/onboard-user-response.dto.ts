@@ -1,8 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+class VirtualAccountDto {
+  @ApiProperty({ example: '0123456789' })
+  accountNumber: string | null
+
+  @ApiProperty({ example: 'Squad MFB' })
+  bankName: string | null
+
+  @ApiProperty({ example: 'Amara Okafor' })
+  accountName: string | null
+}
+
 export class OnboardUserResponseDto {
   @ApiProperty({ example: 'USR-1684156800000' })
-  userId: string
+  id: string
 
   @ApiProperty({ example: 'Amara' })
   firstName: string
@@ -11,13 +22,13 @@ export class OnboardUserResponseDto {
   lastName: string
 
   @ApiProperty({ example: 'amara@example.com', required: false })
-  email?: string
+  email?: string | null
 
   @ApiProperty({ example: '08012345678' })
   phone: string
 
   @ApiProperty({ enum: ['find_jobs', 'hire_services'], required: false })
-  role?: string
+  role?: string | null
 
   @ApiProperty({ example: ['plumbing', 'tiling'], type: [String] })
   skills: string[]
@@ -28,28 +39,15 @@ export class OnboardUserResponseDto {
   @ApiProperty({ example: 'Lagos' })
   location: string
 
-  @ApiProperty({
-    enum: ['beginner', 'intermediate', 'expert'],
-    required: false,
-  })
-  experience?: string
+  @ApiProperty({ enum: ['beginner', 'intermediate', 'expert'], required: false })
+  experience?: string | null
 
-  @ApiProperty({
-    description: 'Virtual account details returned by Squad payment provider',
-    example: {
-      virtual_account_number: 'SQD-1234567890',
-      bank: 'Wema Bank',
-      account_name: 'Amara Okafor',
-    },
-  })
-  virtualAccount: Record<string, unknown>
+  @ApiProperty({ type: VirtualAccountDto })
+  virtualAccount: VirtualAccountDto
 
-  @ApiProperty({
-    example: 0,
-    description: 'Initial trust score; increases with verified activity',
-  })
+  @ApiProperty({ example: 0 })
   trustScore: number
 
   @ApiProperty({ example: '2024-05-16T10:00:00.000Z' })
-  createdAt: string
+  createdAt: Date
 }
