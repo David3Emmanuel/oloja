@@ -9,22 +9,23 @@
 export interface JobSummary {
   id: string;
   title: string;
-  company: string;
+  postedBy: string;
   matchPercentage: number;
   distance: string;
   duration: string;
-  pay: string;
+  pay: number;
+  payFrequency?: string;
 }
 
 export interface Transaction {
   id: string;
   title: string;
-  timestamp: string; // ISO 8601 date string or display string (e.g. "10:30 AM")
+  timestamp: string; // ISO 8601 date string
   amount: number;
   type: "credit" | "debit";
   category: "job_payment" | "savings_transfer" | "withdrawal" | "deposit" | "other";
   status: "completed" | "pending" | "failed";
-  formattedDateGroup?: string; // e.g. "Today", "May 12" for grouping
+  // formattedDateGroup is frontend-only — compute from timestamp, do not expect from API
 }
 
 export interface MatchReason {
@@ -117,18 +118,15 @@ export interface JobDetailsResponseInterface {
   data?: {
     id: string;
     title: string;
-    company: string;
+    postedBy: string;
     isVerified: boolean;
     location: string;
     rating: number;
     reviewCount: number;
     matchPercentage: number;
     jobType: string;
-    payment: {
-      amount: number;
-      formattedAmount: string;
-      period: string; // e.g., "per week"
-    };
+    pay: number;
+    payFrequency: string; // e.g., "per week"
     distance: string;
     duration: string;
     startDate: string;
@@ -223,20 +221,22 @@ export const mockDashboardResponse: DashboardResponseInterface = {
       {
         id: "job-1",
         title: "Fashion Designer",
-        company: "Alaro Fashion House",
+        postedBy: "Alaro Fashion House",
         matchPercentage: 95,
         distance: "2.3 km",
         duration: "6 months",
-        pay: "₦45,000/week"
+        pay: 45000,
+        payFrequency: "per week"
       },
       {
         id: "job-2",
         title: "Textile Specialist",
-        company: "Balogun Textiles",
+        postedBy: "Balogun Textiles",
         matchPercentage: 88,
         distance: "5.7 km",
         duration: "3 months",
-        pay: "₦38,000/week"
+        pay: 38000,
+        payFrequency: "per week"
       }
     ]
   }
@@ -263,43 +263,39 @@ export const mockWalletResponse: WalletResponseInterface = {
     transactions: [
       {
         id: "txn-1",
-        title: "Job Payment - Fashion...",
-        timestamp: "10:30 AM",
+        title: "Job Payment - Fashion Designer",
+        timestamp: "2026-05-16T10:30:00Z",
         amount: 45000,
         type: "credit",
         category: "job_payment",
-        status: "completed",
-        formattedDateGroup: "Today"
+        status: "completed"
       },
       {
         id: "txn-2",
         title: "Savings Transfer",
-        timestamp: "9:15 AM",
+        timestamp: "2026-05-16T09:15:00Z",
         amount: 5000,
         type: "debit",
         category: "savings_transfer",
-        status: "completed",
-        formattedDateGroup: "Today"
+        status: "completed"
       },
       {
         id: "txn-3",
         title: "Withdrawal Request",
-        timestamp: "Yesterday",
+        timestamp: "2026-05-15T14:00:00Z",
         amount: 20000,
         type: "debit",
         category: "withdrawal",
-        status: "pending",
-        formattedDateGroup: "May 12"
+        status: "pending"
       },
       {
         id: "txn-4",
-        title: "Job Payment - Textile W",
-        timestamp: "2:45 PM",
+        title: "Job Payment - Textile Specialist",
+        timestamp: "2026-05-13T14:45:00Z",
         amount: 38000,
         type: "credit",
         category: "job_payment",
-        status: "completed",
-        formattedDateGroup: "May 10"
+        status: "completed"
       }
     ]
   }
@@ -312,18 +308,15 @@ export const mockJobDetailsResponse: JobDetailsResponseInterface = {
   data: {
     id: "job-1",
     title: "Fashion Designer",
-    company: "Alaro Fashion House",
+    postedBy: "Alaro Fashion House",
     isVerified: true,
     location: "Ikeja, Lagos",
     rating: 4.8,
     reviewCount: 124,
     matchPercentage: 95,
     jobType: "Full-time position",
-    payment: {
-      amount: 45000,
-      formattedAmount: "₦45,000",
-      period: "per week"
-    },
+    pay: 45000,
+    payFrequency: "per week",
     distance: "2.3 km",
     duration: "6 months",
     startDate: "May 20, 2026",
