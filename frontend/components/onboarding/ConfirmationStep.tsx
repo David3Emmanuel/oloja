@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Zap } from "lucide-react";
 
 interface ConfirmationStepProps {
+  email: string;
   onNext: () => void;
 }
 
-export function ConfirmationStep({ onNext }: ConfirmationStepProps) {
+export function ConfirmationStep({ email, onNext }: ConfirmationStepProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -48,7 +49,7 @@ export function ConfirmationStep({ onNext }: ConfirmationStepProps) {
         <h2 className="text-2xl font-bold mb-2 text-white">Enter Verification Code</h2>
         <p className="text-zinc-400 text-sm mb-8">
           We sent a 6 digit verification code to<br />
-          <span className="font-semibold text-zinc-300">user@example.com</span>
+          <span className="font-semibold text-zinc-300">{email}</span>
         </p>
 
         <div className="flex justify-between gap-2 mb-8">
