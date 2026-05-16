@@ -113,7 +113,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
             <div className="w-full">
               <div className="flex justify-between items-end mb-4">
                 <h2 className="text-lg font-bold">AI Recommended Opportunities</h2>
-                <button className="text-[#8b5cf6] text-sm flex items-center hover:underline">
+                <button onClick={() => onViewJob("/")} className="text-[#8b5cf6] text-sm flex items-center hover:underline">
                   See all <ChevronRight className="w-4 h-4" />
                 </button>
               </div>

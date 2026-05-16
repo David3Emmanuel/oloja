@@ -1,22 +1,22 @@
 import React, { useState } from "react";
-import { ArrowLeft, Eye, Download, Send, Plus, PiggyBank, BarChart3, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, EyeOff } from "lucide-react";
+import { Menu, Eye, Download, Send, Plus, PiggyBank, BarChart3, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, EyeOff } from "lucide-react";
 
 interface WalletScreenProps {
-  onBack: () => void;
+  onOpenMenu: () => void;
 }
 
-export function WalletScreen({ onBack }: WalletScreenProps) {
+export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
   const [showWalletAmount, setShowWalletAmount] = useState(false);
 
   const handleShowWalletAmount = () => {
     setShowWalletAmount(prev => !prev);
   };
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100">
+    <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100 relative overflow-x-hidden">
       {/* Header */}
-      <header className="flex items-center gap-4 p-6 pb-4">
-        <button onClick={onBack} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
-          <ArrowLeft className="w-6 h-6" />
+      <header className="flex items-center p-6 pb-2 w-full">
+        <button onClick={onOpenMenu} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors shrink-0">
+          <Menu className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold flex-1 text-center pr-8">My Wallet</h1>
       </header>

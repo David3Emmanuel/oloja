@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeft, Phone, Video, MoreVertical, Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 import { Message } from "@/app/messages/types";
 
 interface ChatThreadProps {

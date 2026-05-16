@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowLeft, MapPin, Clock, TrendingUp, ArrowRight } from "lucide-react";
+import { Menu, MapPin, Clock, TrendingUp, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
 
 const TABS = ["Recents", "Applied", "Current", "Completed"];
 
@@ -57,18 +58,19 @@ const OPPORTUNITIES = [
 export default function OpportunitiesPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("Recents");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="min-h-[100dvh] w-full bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-[#8b5cf6]/30 relative pb-10">
-      <div className="flex-1 w-full h-full relative overflow-x-hidden">
-        <div className="flex-1 flex flex-col h-full w-full max-w-2xl mx-auto">
-          {/* Header */}
-          <header className="flex items-center gap-4 p-6 pb-4">
-            <button onClick={() => router.push('/dashboard')} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <h1 className="text-xl font-bold flex-1 text-center pr-8">Opportunities</h1>
-          </header>
+      <div className="flex-1 w-full h-full relative overflow-x-hidden flex flex-col">
+        {/* Header */}
+        <header className="flex items-center p-6 pb-2 w-full">
+          <button onClick={() => setIsMenuOpen(true)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors shrink-0">
+            <Menu className="w-6 h-6" />
+          </button>
+          <h1 className="text-xl font-bold flex-1 text-center pr-8">Opportunities</h1>
+        </header>
+        <div className="flex-1 flex flex-col w-full max-w-2xl mx-auto">
 
           {/* Tabs */}
           <div className="flex px-6 mb-6 border-b border-zinc-800/50 overflow-x-auto no-scrollbar">
@@ -134,6 +136,7 @@ export default function OpportunitiesPage() {
             </div>
           </div>
         </div>
+        <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       </div>
       <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar {

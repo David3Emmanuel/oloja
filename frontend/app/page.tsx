@@ -188,7 +188,7 @@ export default function AppFlow() {
               transition={viewTransition}
               className="flex-1 flex flex-col h-full w-full max-w-2xl mx-auto"
             >
-              <WalletScreen onBack={() => setCurrentView("dashboard")} />
+              <WalletScreen onOpenMenu={() => setIsMenuOpen(true)} />
             </motion.div>
           )}
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeft, MessageSquareText } from "lucide-react";
+import { Menu, MessageSquareText } from "lucide-react";
 import { Chat } from "@/app/messages/types";
 
 interface ChatListProps {
@@ -7,7 +7,7 @@ interface ChatListProps {
   filter: "all" | "unread";
   setFilter: (f: "all" | "unread") => void;
   handleMarkAllRead: () => void;
-  onBack: () => void;
+  onOpenMenu: () => void;
   onChatClick: (chatId: string, jobTitle: string) => void;
 }
 
@@ -16,21 +16,21 @@ export function ChatList({
   filter,
   setFilter,
   handleMarkAllRead,
-  onBack,
+  onOpenMenu,
   onChatClick
 }: ChatListProps) {
   const displayedChats = allChats.filter(chat => filter === "all" || chat.unread);
 
   return (
     <div className="min-h-[100dvh] w-full bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-[#8b5cf6]/30 relative pb-10">
-      <div className="flex-1 w-full h-full relative overflow-x-hidden">
-        <div className="flex-1 flex flex-col h-full w-full max-w-2xl mx-auto">
-          <header className="flex items-center gap-4 p-6 pb-4">
-            <button onClick={onBack} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <h1 className="text-xl font-bold flex-1 text-center pr-8">Messages</h1>
-          </header>
+      <div className="flex-1 w-full h-full relative overflow-x-hidden flex flex-col">
+        <header className="flex items-center p-6 pb-2 w-full">
+          <button onClick={onOpenMenu} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors shrink-0">
+            <Menu className="w-6 h-6" />
+          </button>
+          <h1 className="text-xl font-bold flex-1 text-center pr-8">Messages</h1>
+        </header>
+        <div className="flex-1 flex flex-col w-full max-w-2xl mx-auto">
 
           <div className="flex items-center justify-between px-6 mb-6 border-b border-zinc-800/50 pb-4">
             <div className="flex gap-2">

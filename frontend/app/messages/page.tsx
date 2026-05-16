@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ChatThread } from "@/components/messages/ChatThread";
 import { ChatList } from "@/components/messages/ChatList";
 import { Chat, Message } from "./types";
+import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
 
 export default function MessagesPage() {
   return (
@@ -18,6 +19,7 @@ function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const recipient = searchParams.get("recipient");
   const job = searchParams.get("job");
@@ -152,13 +154,16 @@ function MessagesContent() {
   }
 
   return (
-    <ChatList 
-      allChats={allChats}
-      filter={filter}
-      setFilter={setFilter}
-      handleMarkAllRead={handleMarkAllRead}
-      onBack={() => router.push('/dashboard')}
-      onChatClick={(id, title) => router.push(`/messages?recipient=${encodeURIComponent(id)}&job=${encodeURIComponent(title)}`)}
-    />
+    <>
+      <ChatList 
+        allChats={allChats}
+        filter={filter}
+        setFilter={setFilter}
+        handleMarkAllRead={handleMarkAllRead}
+        onOpenMenu={() => setIsMenuOpen(true)}
+        onChatClick={(id, title) => router.push(`/messages?recipient=${encodeURIComponent(id)}&job=${encodeURIComponent(title)}`)}
+      />
+      <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+    </>
   );
 }
