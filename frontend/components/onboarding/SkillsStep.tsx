@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Globe, Briefcase, Scissors, ChefHat, Sparkles, Car, Wrench, Paintbrush, Zap, Hammer, Camera, ShoppingBag, Truck, GraduationCap, Flame, Utensils, Box } from "lucide-react";
+import { ArrowRight, ArrowLeft, Globe, Briefcase, Scissors, ChefHat, Sparkles, Car, Wrench, Paintbrush, Zap, Hammer, Camera, ShoppingBag, Truck, GraduationCap, Flame, Utensils, Box } from "lucide-react";
 
 interface SkillsStepProps {
   languages: string[];
@@ -7,10 +7,11 @@ interface SkillsStepProps {
   skills: string[];
   setSkills: (skills: string[]) => void;
   onNext: () => void;
+  onBack: () => void;
 }
 
 export function SkillsStep({
-  languages, setLanguages, skills, setSkills, onNext
+  languages, setLanguages, skills, setSkills, onNext, onBack
 }: SkillsStepProps) {
   const toggleLanguage = (lang: string) => {
     if (languages.includes(lang)) {
@@ -52,6 +53,9 @@ export function SkillsStep({
 
   return (
     <div className="flex-1 flex flex-col px-6 py-12">
+      <button onClick={onBack} className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 text-sm mb-4 w-fit transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 tracking-tight">Tell us about your skills</h1>
         <p className="text-zinc-500 dark:text-zinc-400">Select all the skills you have experience with</p>
@@ -115,7 +119,7 @@ export function SkillsStep({
       <div className="mt-8 pt-4">
         <button
           onClick={onNext}
-          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 active:scale-[0.98]"
+          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#8b5cf6] dark:bg-[#8b5cf6] text-white hover:bg-[#8b5cf6]/70 active:scale-[0.98]"
         >
           Continue <ArrowRight className="w-5 h-5" />
         </button>

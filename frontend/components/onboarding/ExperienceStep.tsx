@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Activity, Zap } from "lucide-react";
+import { ArrowRight, ArrowLeft, Activity, Zap } from "lucide-react";
 import { ExperienceLevel, JobType, WorkType } from "./types";
 
 interface ExperienceStepProps {
@@ -13,10 +13,11 @@ interface ExperienceStepProps {
   setWorkDistance: (distance: string) => void;
   onComplete: () => void;
   isSubmitting?: boolean;
+  onBack: () => void;
 }
 
 export function ExperienceStep({
-  experience, setExperience, jobType, setJobType, workType, setWorkType, workDistance, setWorkDistance, onComplete, isSubmitting
+  experience, setExperience, jobType, setJobType, workType, setWorkType, workDistance, setWorkDistance, onComplete, isSubmitting, onBack
 }: ExperienceStepProps) {
   
   const experienceOptions: { id: ExperienceLevel; label: string; desc: string }[] = [
@@ -40,6 +41,9 @@ export function ExperienceStep({
 
   return (
     <div className="flex-1 flex flex-col px-6 py-12">
+      <button onClick={onBack} className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 text-sm mb-4 w-fit transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 tracking-tight">Your experience level</h1>
         <p className="text-zinc-500 dark:text-zinc-400">This helps us match you with suitable jobs</p>
@@ -139,7 +143,7 @@ export function ExperienceStep({
         <button
           onClick={onComplete}
           disabled={isSubmitting}
-          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 active:scale-[0.98] disabled:opacity-70"
+          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#8b5cf6] dark:bg-[#8b5cf6] text-white hover:bg-[#8b5cf6]/70 active:scale-[0.98] disabled:opacity-70"
         >
           {isSubmitting ? "Completing..." : "Complete Setup"} <ArrowRight className="w-5 h-5" />
         </button>

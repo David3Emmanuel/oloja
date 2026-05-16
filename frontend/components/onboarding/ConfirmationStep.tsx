@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Zap } from "lucide-react";
+import { Zap, ArrowLeft } from "lucide-react";
 
 interface ConfirmationStepProps {
   email: string;
   onNext: () => void;
+  onBack: () => void;
 }
 
-export function ConfirmationStep({ email, onNext }: ConfirmationStepProps) {
+export function ConfirmationStep({ email, onNext, onBack }: ConfirmationStepProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -80,8 +81,8 @@ export function ConfirmationStep({ email, onNext }: ConfirmationStepProps) {
           Confirm
         </button>
 
-        <button className="w-full mt-4 py-2 text-[#8b5cf6] font-medium transition-colors hover:text-[#7c3aed]">
-          Cancel
+        <button onClick={onBack} className="w-full mt-4 py-2 text-[#8b5cf6] font-medium transition-colors hover:text-[#7c3aed] flex items-center justify-center gap-1">
+          <ArrowLeft className="w-4 h-4" /> Go Back
         </button>
       </div>
 
