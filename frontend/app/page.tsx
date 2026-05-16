@@ -153,7 +153,7 @@ export default function AppFlow() {
                       onNext={nextStep}
                     />
                   )}
-                  {currentStep === 2 && <ConfirmationStep onNext={nextStep} />}
+                  {currentStep === 2 && <ConfirmationStep email={email} onNext={nextStep} />}
                   {currentStep === 3 && <RoleStep role={role} setRole={setRole} onNext={nextStep} />}
                   {currentStep === 4 && (
                     <PersonalInfoStep
