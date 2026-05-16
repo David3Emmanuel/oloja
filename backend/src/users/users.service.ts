@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import * as bcrypt from 'bcrypt'
 import { SquadService } from '../squad/squad.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { OnboardUserDto } from './dto/onboard-user.dto'
@@ -30,6 +31,7 @@ export class UsersService {
       )
     }
     const va = (squadAccount?.data ?? {}) as Record<string, unknown>
+    const hashedPassword = dto.password ? await bcrypt.hash(dto.password, 10) : null
     const user = await this.prisma.user.create({
       data: {
         id: `USR-${Date.now()}`,
@@ -40,6 +42,7 @@ export class UsersService {
         dob: dto.dob,
         gender: dto.gender,
         address: dto.address,
+        password: hashedPassword,
         role: dto.role,
         brandName: dto.brandName,
         location: dto.location,

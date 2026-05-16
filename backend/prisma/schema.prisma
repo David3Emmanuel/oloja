@@ -16,6 +16,7 @@ model User {
   dob          String?
   gender       String?
   address      String?
+  password     String?
   role         String?
   brandName    String?
   location     String

@@ -5,6 +5,7 @@ import { SquadModule } from './squad/squad.module'
 import { UsersModule } from './users/users.module'
 import { OpportunitiesModule } from './opportunities/opportunities.module'
 import { TrustModule } from './trust/trust.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TrustModule } from './trust/trust.module'
     UsersModule,
     OpportunitiesModule,
     TrustModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
