@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
-import { ArrowLeft, Briefcase, CheckCircle2, Star, PiggyBank, Calendar, TrendingUp, Lock, Award } from "lucide-react";
+import React, { useState } from "react";
+import { Menu, Briefcase, CheckCircle2, Star, PiggyBank, Calendar, TrendingUp, Lock, Award } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
 
 export default function GrowthPage() {
   const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const score = 320;
   const maxScore = 1000;
   const percentage = (score / maxScore) * 100;
@@ -15,16 +17,15 @@ export default function GrowthPage() {
 
   return (
     <div className="min-h-[100dvh] w-full bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-[#8b5cf6]/30 relative pb-20">
-      <div className="flex-1 w-full h-full relative overflow-x-hidden">
-        <div className="flex-1 flex flex-col h-full w-full max-w-2xl mx-auto">
-          <header className="flex items-center gap-4 p-6 pb-4">
-            <button onClick={() => router.push('/dashboard')} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <h1 className="text-xl font-bold flex-1 text-center pr-8">Growth</h1>
-          </header>
-          
-          <div className="px-6 space-y-8">
+      <div className="flex-1 w-full h-full relative overflow-x-hidden flex flex-col">
+        <header className="flex items-center p-6 pb-2 w-full">
+          <button onClick={() => setIsMenuOpen(true)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors shrink-0">
+            <Menu className="w-6 h-6" />
+          </button>
+          <h1 className="text-xl font-bold flex-1 text-center pr-8">Growth</h1>
+        </header>
+        
+        <div className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-6 space-y-8">
             {/* Score Card */}
             <div className="bg-[#18181b] border border-zinc-800/50 rounded-3xl p-8 flex flex-col items-center text-center">
               <div className="relative w-40 h-40 mb-6 flex items-center justify-center">
@@ -143,8 +144,8 @@ export default function GrowthPage() {
 
           </div>
         </div>
+        <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       </div>
-    </div>
   );
 }
 

@@ -1,66 +1,169 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowLeft, MessageSquareText } from "lucide-react";
-import { useRouter } from "next/navigation";
+import React, { useState, Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ChatThread } from "@/components/messages/ChatThread";
+import { ChatList } from "@/components/messages/ChatList";
+import { Chat, Message } from "./types";
+import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
 
 export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[100dvh] bg-[#09090b]"></div>}>
+      <MessagesContent />
+    </Suspense>
+  );
+}
+
+function MessagesContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const recipient = searchParams.get("recipient");
+  const job = searchParams.get("job");
+  const date = searchParams.get("date");
+
+  const [inputValue, setInputValue] = useState("");
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [allChats, setAllChats] = useState<Chat[]>([]);
+
+  // Load all chats for list view
+  useEffect(() => {
+    if (!recipient) {
+      const savedChatsStr = localStorage.getItem("oloja_chats");
+      if (savedChatsStr) {
+        try {
+          const parsed = JSON.parse(savedChatsStr) as Chat[];
+          parsed.sort((a, b) => b.lastUpdated - a.lastUpdated);
+          setAllChats(parsed);
+        } catch (e) {
+          console.error("Failed to parse chats", e);
+        }
+      }
+    }
+  }, [recipient]);
+
+  // Load or initialize specific chat thread
+  useEffect(() => {
+    if (recipient) {
+      const savedChatsStr = localStorage.getItem("oloja_chats");
+      let savedChats: Chat[] = [];
+      try {
+        if (savedChatsStr) savedChats = JSON.parse(savedChatsStr);
+      } catch (e) {}
+
+      const existingChat = savedChats.find(c => c.id === recipient);
+
+      if (existingChat) {
+        if (existingChat.unread) {
+          existingChat.unread = false;
+          localStorage.setItem("oloja_chats", JSON.stringify(savedChats));
+        }
+        setChatMessages(existingChat.messages);
+      } else {
+        const newMessages = [{
+          text: `Hi, I am interested in the ${job || 'job'} you posted on ${date || 'recent date'}.`,
+          time: "Just now",
+          isUser: true
+        }];
+        setChatMessages(newMessages);
+
+        const newChat: Chat = {
+          id: recipient,
+          recipientName: recipient,
+          jobTitle: job || 'Job',
+          messages: newMessages,
+          unread: false,
+          lastUpdated: Date.now()
+        };
+        savedChats.push(newChat);
+        localStorage.setItem("oloja_chats", JSON.stringify(savedChats));
+
+        // Auto-reply after 1.5s
+        setTimeout(() => {
+          setChatMessages(prev => {
+            const updatedMsgs = [
+              ...prev,
+              {
+                text: "[Automated Message] Thanks for your interest! We have received your message and will review your profile. We will get back to you shortly.",
+                time: "Just now",
+                isUser: false
+              }
+            ];
+            
+            const currentChatsStr = localStorage.getItem("oloja_chats");
+            if (currentChatsStr) {
+              const currentChats: Chat[] = JSON.parse(currentChatsStr);
+              const chatIdx = currentChats.findIndex(c => c.id === recipient);
+              if (chatIdx >= 0) {
+                currentChats[chatIdx].messages = updatedMsgs;
+                currentChats[chatIdx].unread = true;
+                currentChats[chatIdx].lastUpdated = Date.now();
+                localStorage.setItem("oloja_chats", JSON.stringify(currentChats));
+              }
+            }
+            return updatedMsgs;
+          });
+        }, 1500);
+      }
+    }
+  }, [recipient, job, date]);
+
+  const handleSend = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!inputValue.trim() || !recipient) return;
+    
+    const newMessage = { text: inputValue.trim(), time: "Just now", isUser: true };
+    setChatMessages(prev => {
+      const updated = [...prev, newMessage];
+      
+      const chatsStr = localStorage.getItem("oloja_chats");
+      if (chatsStr) {
+        const chats: Chat[] = JSON.parse(chatsStr);
+        const chatIdx = chats.findIndex(c => c.id === recipient);
+        if (chatIdx >= 0) {
+          chats[chatIdx].messages = updated;
+          chats[chatIdx].lastUpdated = Date.now();
+          localStorage.setItem("oloja_chats", JSON.stringify(chats));
+        }
+      }
+      return updated;
+    });
+    setInputValue("");
+  };
+
+  const handleMarkAllRead = () => {
+    const updated = allChats.map(c => ({ ...c, unread: false }));
+    setAllChats(updated);
+    localStorage.setItem("oloja_chats", JSON.stringify(updated));
+  };
+
+  if (recipient) {
+    return (
+      <ChatThread 
+        recipient={recipient}
+        chatMessages={chatMessages}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        handleSend={handleSend}
+        onBack={() => router.push('/messages')}
+      />
+    );
+  }
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-[#8b5cf6]/30 relative pb-10">
-      <div className="flex-1 w-full h-full relative overflow-x-hidden">
-        <div className="flex-1 flex flex-col h-full w-full max-w-2xl mx-auto">
-          {/* Header */}
-          <header className="flex items-center gap-4 p-6 pb-4">
-            <button onClick={() => router.push('/dashboard')} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <h1 className="text-xl font-bold flex-1 text-center pr-8">Messages</h1>
-          </header>
-
-          {/* Filters & Actions */}
-          <div className="flex items-center justify-between px-6 mb-8 border-b border-zinc-800/50 pb-4">
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setFilter("all")}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  filter === "all" 
-                    ? "bg-[#8b5cf6]/20 text-[#8b5cf6]" 
-                    : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300"
-                }`}
-              >
-                All
-              </button>
-              <button 
-                onClick={() => setFilter("unread")}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  filter === "unread" 
-                    ? "bg-[#8b5cf6]/20 text-[#8b5cf6]" 
-                    : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300"
-                }`}
-              >
-                Unread
-              </button>
-            </div>
-            <button className="text-emerald-500 text-sm font-medium hover:text-emerald-400 transition-colors">
-              Mark all as read
-            </button>
-          </div>
-
-          {/* Empty State */}
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center -mt-20">
-            <div className="mb-6">
-              <MessageSquareText className="w-32 h-32 text-[#8b5cf6]" strokeWidth={1.5} />
-            </div>
-            <h2 className="text-3xl font-bold mb-3 tracking-tight">No Messages at<br/>this time.</h2>
-            <p className="text-zinc-500 text-base max-w-[280px]">
-              Clients who discover your profile<br/>can message you here
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <>
+      <ChatList 
+        allChats={allChats}
+        filter={filter}
+        setFilter={setFilter}
+        handleMarkAllRead={handleMarkAllRead}
+        onOpenMenu={() => setIsMenuOpen(true)}
+        onChatClick={(id, title) => router.push(`/messages?recipient=${encodeURIComponent(id)}&job=${encodeURIComponent(title)}`)}
+      />
+      <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+    </>
   );
 }
