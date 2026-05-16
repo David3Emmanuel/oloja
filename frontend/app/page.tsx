@@ -16,7 +16,6 @@ import { DashboardScreen } from "@/components/dashboard/DashboardScreen";
 import { WalletScreen } from "@/components/dashboard/WalletScreen";
 import { JobDetailsScreen } from "@/components/dashboard/JobDetailsScreen";
 import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useRouter } from "next/navigation";
 
 const steps = [

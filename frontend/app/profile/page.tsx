@@ -2,7 +2,6 @@
 
 import React from "react";
 import { ArrowLeft, User } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
