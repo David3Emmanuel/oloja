@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, User, Wallet, Shield, ChevronRight, MapPin, Clock, TrendingUp, PiggyBank } from "lucide-react";
+import { Menu, User, Wallet, Shield, ChevronRight, MapPin, Clock, TrendingUp, PiggyBank, ArrowRight } from "lucide-react";
+import { useUser } from "@/context/UserContext";
+
+const API_BASE = "https://oloja-production.up.railway.app";
 
 interface DashboardScreenProps {
   onOpenMenu: () => void;
@@ -9,6 +12,73 @@ interface DashboardScreenProps {
 }
 
 export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: DashboardScreenProps) {
+  const { user } = useUser();
+
+  const [trustScore, setTrustScore] = useState<number | null>(null);
+  const [transactionCount, setTransactionCount] = useState<number>(0);
+  const [isLoadingTrust, setIsLoadingTrust] = useState(true);
+
+  const [opportunities, setOpportunities] = useState<any[]>([]);
+  const [isLoadingOpps, setIsLoadingOpps] = useState(true);
+
+  // Fetch trust score using the user's actual virtual account number
+  useEffect(() => {
+    const fetchTrustScore = async () => {
+      const acctNum = user?.virtualAccount?.virtual_account_number;
+      if (!acctNum) {
+        // Fall back to the trust score stored during onboarding
+        setTrustScore(user?.trustScore ?? null);
+        setIsLoadingTrust(false);
+        return;
+      }
+      try {
+        const response = await fetch(`${API_BASE}/api/trust/${acctNum}`);
+        if (!response.ok) throw new Error('Failed to fetch trust score');
+        const data = await response.json();
+        setTrustScore(data.trustScore);
+        setTransactionCount(data.transactionCount ?? 0);
+      } catch (err) {
+        console.error(err);
+        // Fall back to context value
+        setTrustScore(user?.trustScore ?? null);
+      } finally {
+        setIsLoadingTrust(false);
+      }
+    };
+    fetchTrustScore();
+  }, [user]);
+
+  // Fetch matched opportunities using the user's profile data
+  useEffect(() => {
+    const fetchOpportunities = async () => {
+      setIsLoadingOpps(true);
+      try {
+        const queryParams = new URLSearchParams({
+          skills: user?.skills?.join(',') || '',
+          location: user?.location || '',
+          languages: user?.languages?.join(',') || '',
+        });
+        const res = await fetch(`${API_BASE}/api/opportunities/match?${queryParams}`);
+        if (!res.ok) throw new Error('Failed to fetch opportunities');
+        const data = await res.json();
+        setOpportunities(data.matches || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoadingOpps(false);
+      }
+    };
+    fetchOpportunities();
+  }, [user]);
+
+  // Derive a time-of-day greeting
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#09090b] text-zinc-900 dark:text-white">
       {/* Header */}
@@ -23,7 +93,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
 
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-8 no-scrollbar w-full max-w-7xl mx-auto">
         <div className="mb-6 max-w-2xl mx-auto w-full">
-          <h1 className="text-2xl font-bold mb-1 tracking-tight">Good morning, Gemini</h1>
+          <h1 className="text-2xl font-bold mb-1 tracking-tight">{getGreeting()}, {user?.firstName || "there"}</h1>
           <p className="text-zinc-500 dark:text-zinc-400 text-sm">Here are your opportunities today</p>
         </div>
 
@@ -40,7 +110,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
                 Your Wallet
               </div>
               <div className="text-4xl font-bold tracking-tight mb-4 text-white">
-                ₦12,450.00
+                ₦0.00
               </div>
               <div className="text-white/80 text-xs mb-4">Available balance</div>
               <div className="flex items-center text-sm font-medium text-white">
@@ -56,11 +126,15 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
                 </div>
                 <div>
                   <h3 className="font-semibold">Trust Score</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-xs">Building your identity</p>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-xs">
+                    {transactionCount > 0 ? `Based on ${transactionCount} transactions` : "Building your identity"}
+                  </p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-emerald-500 mb-1">320</div>
+                <div className="text-2xl font-bold text-emerald-500 mb-1">
+                  {isLoadingTrust ? "..." : trustScore !== null ? trustScore : "N/A"}
+                </div>
                 <button className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors">View</button>
               </div>
             </div>
@@ -78,11 +152,17 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
               </div>
               <div className="flex justify-between items-end mb-3">
                 <span className="text-sm text-zinc-500 dark:text-zinc-400">Estimated Monthly</span>
-                <span className="text-lg font-bold text-emerald-500">₦187,000</span>
+                <span className="text-lg font-bold text-emerald-500">
+                  {opportunities.length > 0
+                    ? `₦${opportunities.reduce((sum: number, o: any) => sum + (o.pay || 0), 0).toLocaleString()}`
+                    : "₦0"}
+                </span>
               </div>
               <div className="flex justify-between items-end">
                 <span className="text-sm text-zinc-500 dark:text-zinc-400">With matched jobs</span>
-                <span className="text-sm font-medium text-[#8b5cf6]">+42%</span>
+                <span className="text-sm font-medium text-[#8b5cf6]">
+                  {opportunities.length > 0 ? `${opportunities.length} found` : "—"}
+                </span>
               </div>
             </div>
 
@@ -117,25 +197,30 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
                   See all <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
+
+              {isLoadingOpps && (
+                <div className="text-center text-zinc-500 py-8 text-sm">Loading recommendations...</div>
+              )}
+
+              {!isLoadingOpps && opportunities.length === 0 && (
+                <div className="text-center text-zinc-500 py-8 bg-zinc-50 dark:bg-[#18181b] rounded-2xl border border-zinc-200 dark:border-zinc-800 text-sm">
+                  No matched opportunities yet. Complete your profile to get personalised recommendations.
+                </div>
+              )}
+
               <div className="flex flex-col gap-4 w-full">
-                <JobCard
-                  title="Fashion Designer"
-                  company="Alaro Fashion House"
-                  match="95%"
-                  distance="2.3 km"
-                  duration="6 months"
-                  pay="₦45,000/week"
-                  onClick={() => onViewJob("job-1")}
-                />
-                <JobCard
-                  title="Textile Specialist"
-                  company="Balogun Textiles"
-                  match="88%"
-                  distance="5.7 km"
-                  duration="3 months"
-                  pay="₦38,000/week"
-                  onClick={() => onViewJob("job-2")}
-                />
+                {!isLoadingOpps && opportunities.slice(0, 3).map((job: any) => (
+                  <JobCard
+                    key={job.id}
+                    title={job.title}
+                    company={job.postedBy || job.category || ""}
+                    match={`${job.matchPercentage ?? 0}%`}
+                    distance={job.distance || job.location || "Remote"}
+                    duration={job.duration || "N/A"}
+                    pay={`₦${(job.pay || 0).toLocaleString()}/${job.payFrequency?.replace('_', ' ') || 'job'}`}
+                    onClick={() => onViewJob(job.id)}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -187,6 +272,3 @@ function JobCard({ title, company, match, distance, duration, pay, onClick }: Jo
     </div>
   );
 }
-
-// Ensure you have ArrowRight from lucide-react if JobCard uses it
-import { ArrowRight } from "lucide-react";

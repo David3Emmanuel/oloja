@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, Copy, Sparkles, ArrowDownLeft, Send, LineChart, Shield, Lock } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) {
   const [copied, setCopied] = useState(false);
@@ -11,6 +12,10 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
    setCopied(true);
    setTimeout(() => setCopied(false), 2000);
   }
+
+  // Add useUser to get user data
+  const { user } = useUser();
+  
   return (
     <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#09090b] text-zinc-900 dark:text-white relative">
       <div className="flex-1 overflow-y-auto px-6 pt-12 pb-32 no-scrollbar">
@@ -30,15 +35,15 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
           </div>
           <div className="mb-4">
             <div className="text-zinc-500 dark:text-white/70 text-xs mb-1">Account Name</div>
-            <div className="text-lg font-semibold">Gemini Kator Koragee</div>
+            <div className="text-lg font-semibold">{user?.virtualAccount?.account_name || `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'N/A'}</div>
           </div>
           <div className="mb-4 flex justify-between items-end">
             <div>
               <div className="text-zinc-500 dark:text-white/70 text-xs mb-1">Account Number</div>
-              <div className="text-2xl font-bold tracking-wider">2074893156</div>
+              <div className="text-2xl font-bold tracking-wider">{user?.virtualAccount?.virtual_account_number}</div>
             </div>
             <button 
-              onClick={() => saveToClipboard("2074893156")}
+              onClick={() => saveToClipboard(user?.virtualAccount?.virtual_account_number ?? '')}
               className="w-10 h-10 rounded-xl bg-black/10 dark:bg-white/20 flex items-center justify-center hover:bg-black/20 dark:bg-white/30 transition-colors"
             >
               {copied ? (
@@ -50,7 +55,7 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
           </div>
           <div>
             <div className="text-zinc-500 dark:text-white/70 text-xs mb-1">Bank Name</div>
-            <div className="font-medium">Guarantee Trust Bank</div>
+            <div className="font-medium">{user?.virtualAccount?.bank || 'N/A'}</div>
           </div>
         </div>
 

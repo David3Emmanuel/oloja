@@ -3,13 +3,15 @@ import { ArrowRight, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { PaginationDots } from "./PaginationDots";
 
 interface AuthStepProps {
+  email: string;
+  setEmail: (val: string) => void;
+  password: string;
+  setPassword: (val: string) => void;
   onNext: () => void;
 }
 
-export function AuthStep({ onNext }: AuthStepProps) {
+export function AuthStep({ email, setEmail, password, setPassword, onNext }: AuthStepProps) {
   const [isLogin, setIsLogin] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
   const [showPassword, setShowPassword] = useState(false);
