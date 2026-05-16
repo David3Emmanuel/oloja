@@ -13,6 +13,9 @@ model User {
   lastName     String
   email        String?
   phone        String   @unique
+  dob          String?
+  gender       String?
+  address      String?
   role         String?
   brandName    String?
   location     String

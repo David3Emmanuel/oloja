@@ -14,9 +14,13 @@ export class UsersService {
     const squadAccount = await this.squadService.createVirtualAccount({
       firstName: dto.firstName,
       lastName: dto.lastName,
+      middleName: dto.middleName,
       email: dto.email,
       phone: dto.phone,
       bvn: dto.bvn,
+      dob: dto.dob,
+      gender: dto.gender,
+      address: dto.address,
     })
 
     const va = (squadAccount?.data ?? {}) as Record<string, unknown>
@@ -27,6 +31,9 @@ export class UsersService {
         lastName: dto.lastName,
         email: dto.email,
         phone: dto.phone,
+        dob: dto.dob,
+        gender: dto.gender,
+        address: dto.address,
         role: dto.role,
         brandName: dto.brandName,
         location: dto.location,

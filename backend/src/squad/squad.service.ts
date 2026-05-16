@@ -9,23 +9,31 @@ export class SquadService {
     this.squad = new CreateSquadClient(
       process.env.SQUAD_PUBLIC_KEY as string,
       process.env.SQUAD_PRIVATE_KEY as string,
-      process.env.NODE_ENV as string,
+      process.env.NODE_ENV as 'production' | 'development',
     )
   }
 
   async createVirtualAccount(data: {
     firstName: string
     lastName: string
+    middleName?: string
     email?: string
     phone: string
     bvn: string
+    dob: string
+    gender: '1' | '2'
+    address: string
   }) {
     return this.squad.createVirtualAccount({
       firstName: data.firstName,
       lastName: data.lastName,
+      middleName: data.middleName ?? '',
       mobileNumber: data.phone,
       email: data.email ?? '',
       bvn: data.bvn,
+      dob: data.dob,
+      gender: data.gender,
+      address: data.address,
       customerIdentifier: data.phone,
     })
   }
@@ -36,7 +44,7 @@ export class SquadService {
     })
 
     // Normalize to shape expected by TrustScoreService
-    const raw: any[] = res?.data ?? []
+    const raw: any[] = (res as any)?.data ?? []
     const data = raw.map((t) => ({
       amount: (t.amount ?? 0) / 100, // kobo → naira
       type: t.transaction_type ?? t.type ?? 'credit',
