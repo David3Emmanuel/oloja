@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Menu, User, Wallet, Shield, ChevronRight, MapPin, Clock, TrendingUp, PiggyBank } from "lucide-react";
 
 interface DashboardScreenProps {
@@ -15,20 +16,20 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
         <button onClick={onOpenMenu} className="p-2 -ml-2 text-zinc-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
           <Menu className="w-6 h-6" />
         </button>
-        <div className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-[#8b5cf6]">
+        <Link href="/profile" className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-[#8b5cf6] hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
           <User className="w-5 h-5" />
-        </div>
+        </Link>
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-8 no-scrollbar w-full max-w-7xl mx-auto">
-        <div className="mb-6">
+        <div className="mb-6 max-w-2xl mx-auto w-full">
           <h1 className="text-2xl font-bold mb-1 tracking-tight">Good morning, Gemini</h1>
           <p className="text-zinc-500 dark:text-zinc-400 text-sm">Here are your opportunities today</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Wallet & Stats (First thing user sees) */}
-          <div className="lg:col-span-4 space-y-6">
+        <div className="flex flex-col gap-6 max-w-2xl mx-auto w-full">
+          {/* Top Section: Wallet & Stats */}
+          <div className="space-y-6 w-full">
             {/* Wallet Card */}
             <button 
               onClick={onViewWallet}
@@ -48,7 +49,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
             </button>
 
             {/* Trust Score */}
-            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 flex justify-between items-center">
+            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 flex justify-between items-center w-full">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                   <Shield className="w-6 h-6" />
@@ -65,7 +66,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
             </div>
 
             {/* Financial Growth */}
-            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 w-full">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                   <TrendingUp className="w-5 h-5" />
@@ -86,7 +87,7 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
             </div>
 
             {/* Savings Eligibility */}
-            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+            <div className="bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 w-full">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                   <PiggyBank className="w-5 h-5" />
@@ -106,17 +107,17 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
             </div>
           </div>
 
-          {/* Right Column: Opportunities */}
-          <div className="lg:col-span-8 space-y-6">
+          {/* Bottom Section: Opportunities */}
+          <div className="space-y-6 w-full">
             {/* AI Opportunities */}
-            <div>
+            <div className="w-full">
               <div className="flex justify-between items-end mb-4">
                 <h2 className="text-lg font-bold">AI Recommended Opportunities</h2>
                 <button className="text-[#8b5cf6] text-sm flex items-center hover:underline">
                   See all <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4 w-full">
                 <JobCard
                   title="Fashion Designer"
                   company="Alaro Fashion House"
@@ -135,7 +136,6 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
                   pay="₦38,000/week"
                   onClick={() => onViewJob("job-2")}
                 />
-                {/* Additional empty slots for extra wide screens could go here, handled by grid */}
               </div>
             </div>
           </div>

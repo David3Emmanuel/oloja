@@ -16,7 +16,6 @@ import { DashboardScreen } from "@/components/dashboard/DashboardScreen";
 import { WalletScreen } from "@/components/dashboard/WalletScreen";
 import { JobDetailsScreen } from "@/components/dashboard/JobDetailsScreen";
 import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useRouter } from "next/navigation";
 
 const steps = [
@@ -39,7 +38,9 @@ export default function AppFlow() {
 
   // State for forms
   const [role, setRole] = useState<Role>(null);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [bvn, setBvn] = useState("");
   const [brandName, setBrandName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
@@ -57,7 +58,7 @@ export default function AppFlow() {
   };
 
   const handleOnboardingComplete = () => {
-    console.log({ role, name, brandName, phone, location, languages, skills, experience, jobType, workType, workDistance });
+    console.log({ role, firstName, lastName, bvn, brandName, phone, location, languages, skills, experience, jobType, workType, workDistance });
     setCurrentView("wallet_success");
   };
 
@@ -75,7 +76,6 @@ export default function AppFlow() {
 
   return (
     <div className="min-h-[100dvh] w-full bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 flex flex-col font-sans selection:bg-[#8b5cf6]/30 relative">
-      <ThemeToggle />
       <div className="flex-1 w-full h-full relative overflow-x-hidden">
         <AnimatePresence mode="wait">
           {currentView === "onboarding" && (
@@ -104,8 +104,12 @@ export default function AppFlow() {
                   {currentStep === 3 && <RoleStep role={role} setRole={setRole} onNext={nextStep} />}
                   {currentStep === 4 && (
                     <PersonalInfoStep
-                      name={name}
-                      setName={setName}
+                      firstName={firstName}
+                      setFirstName={setFirstName}
+                      lastName={lastName}
+                      setLastName={setLastName}
+                      bvn={bvn}
+                      setBvn={setBvn}
                       brandName={brandName}
                       setBrandName={setBrandName}
                       phone={phone}
