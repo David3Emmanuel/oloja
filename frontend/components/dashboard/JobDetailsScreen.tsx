@@ -1,20 +1,65 @@
-import React from "react";
-import { ArrowLeft, Star, MapPin, Clock, Calendar, TrendingUp, ShieldCheck, CheckCircle2, Building2, Zap, Award } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, Star, MapPin, Clock, Calendar, TrendingUp, ShieldCheck, CheckCircle2, Building2, Zap, Award, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { DUMMY_OPPORTUNITIES, Opportunity } from "@/data/dummyOpportunities";
 
 interface JobDetailsScreenProps {
+  jobId?: string;
   onBack: () => void;
 }
 
-export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
+export function JobDetailsScreen({ jobId, onBack }: JobDetailsScreenProps) {
   const router = useRouter();
+  const [job, setJob] = useState<Opportunity | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate fetching job details from an API
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      const found = DUMMY_OPPORTUNITIES.find((o) => o.id === jobId);
+      setJob(found || DUMMY_OPPORTUNITIES[0]);
+      setIsLoading(false);
+    }, 800); // Simulated network delay
+
+    return () => clearTimeout(timer);
+  }, [jobId]);
 
   const handleApply = () => {
-    const recipient = encodeURIComponent("Dalo Events");
-    const job = encodeURIComponent("Wedding Photography");
-    const date = encodeURIComponent("July 6th");
-    router.push(`/messages?recipient=${recipient}&job=${job}&date=${date}`);
+    if (!job) return;
+    const recipient = encodeURIComponent(job.postedBy);
+    const jobTitle = encodeURIComponent(job.title);
+    const date = encodeURIComponent(job.date);
+    router.push(`/messages?recipient=${recipient}&job=${jobTitle}&date=${date}`);
   };
+
+  const getMatchIcon = (type: string) => {
+    switch (type) {
+      case "ai": return <Zap className="w-4 h-4 text-[#8b5cf6]" />;
+      case "location": return <MapPin className="w-4 h-4 text-emerald-500" />;
+      case "experience": return <Award className="w-4 h-4 text-[#8b5cf6]" />;
+      default: return <Zap className="w-4 h-4 text-[#8b5cf6]" />;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100">
+        <header className="flex items-center gap-4 p-6 pb-2">
+          <button onClick={onBack} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-xl font-bold flex-1 text-center pr-8">Job Details</h1>
+        </header>
+        <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#8b5cf6] animate-spin" />
+          <p className="text-zinc-500 text-sm">Loading job details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!job) return null;
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100 relative">
@@ -31,12 +76,12 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
         {/* Title Section */}
         <div>
           <div className="flex flex-wrap justify-between items-start gap-4 mb-1">
-            <h2 className="text-[22px] font-bold">Wedding Photography</h2>
+            <h2 className="text-[22px] font-bold">{job.title}</h2>
             <div className="bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full text-xs font-medium shrink-0">
-              95% Match
+              {job.matchPercentage}% Match
             </div>
           </div>
-          <p className="text-zinc-500 text-sm">Full-time position</p>
+          <p className="text-zinc-500 text-sm">{job.category} · {job.payFrequency}</p>
         </div>
 
         {/* Company Card */}
@@ -47,34 +92,36 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
                 <Building2 className="w-6 h-6 text-[#8b5cf6]" />
               </div>
               <div>
-                <h3 className="font-semibold text-base mb-0.5">Dalo Events</h3>
-                <p className="text-zinc-500 text-xs">Victoria Island, Lagos</p>
+                <h3 className="font-semibold text-base mb-0.5">{job.postedBy}</h3>
+                <p className="text-zinc-500 text-xs">{job.companyLocation}</p>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 whitespace-nowrap">
-              <ShieldCheck className="w-3.5 h-3.5" /> Verified
-            </div>
+            {job.verified && (
+              <div className="flex items-center gap-1.5 text-xs text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 whitespace-nowrap">
+                <ShieldCheck className="w-3.5 h-3.5" /> Verified
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-1.5 text-xs">
             <Star className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500" />
-            <span className="font-semibold text-emerald-500">4.8</span>
-            <span className="text-zinc-500">(124 reviews)</span>
+            <span className="font-semibold text-emerald-500">{job.rating}</span>
+            <span className="text-zinc-500">({job.reviewCount} reviews)</span>
           </div>
         </div>
 
         {/* Grid Stats */}
         <div className="grid grid-cols-2 gap-3">
-          <StatCard icon={<TrendingUp className="w-4 h-4" />} title="Payment" value="₦45,000" subtitle="Full day" />
-          <StatCard icon={<MapPin className="w-4 h-4" />} title="Distance" value="2.3 km" subtitle="from you" />
-          <StatCard icon={<Clock className="w-4 h-4" />} title="Duration" value="One day" subtitle="Gig" />
-          <StatCard icon={<Calendar className="w-4 h-4" />} title="Date" value="July 6th" subtitle="2026" />
+          <StatCard icon={<TrendingUp className="w-4 h-4" />} title="Payment" value={`₦${job.pay.toLocaleString()}`} subtitle={job.payFrequency} />
+          <StatCard icon={<MapPin className="w-4 h-4" />} title="Distance" value={job.distance} subtitle="from you" />
+          <StatCard icon={<Clock className="w-4 h-4" />} title="Duration" value={job.duration} subtitle="Gig" />
+          <StatCard icon={<Calendar className="w-4 h-4" />} title="Date" value={job.date} subtitle={job.dateYear} />
         </div>
 
         {/* About Job */}
         <div>
           <h3 className="font-semibold text-sm mb-3">About the Job</h3>
           <div className="bg-[#18181b] border border-zinc-800/50 rounded-[20px] p-5 text-zinc-400 text-xs leading-relaxed">
-            Luminary Events is seeking an experienced wedding photographer for a full-day bridal celebration on July 8th, 2025, at a premium venue in Victoria Island, Lagos. Coverage starts from bridal preparation through to the reception. The client expects warm, candid storytelling alongside formal portraits. RAW files and 200+ edited images are required within 7 days of the shoot.
+            {job.description}
           </div>
         </div>
 
@@ -82,9 +129,9 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
         <div>
           <h3 className="font-semibold text-sm mb-3">Required Skills</h3>
           <div className="flex flex-wrap gap-2">
-            <SkillTag label="Photography" />
-            <SkillTag label="Event Coverage" />
-            <SkillTag label="Weddings Coverage" />
+            {job.skills.map((skill) => (
+              <SkillTag key={skill} label={skill} />
+            ))}
           </div>
         </div>
 
@@ -92,21 +139,14 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
         <div>
           <h3 className="font-semibold text-sm mb-3">Why This Matches You</h3>
           <div className="bg-[#18181b] border border-zinc-800/50 rounded-[20px] p-5 space-y-5">
-            <MatchPoint 
-              icon={<Zap className="w-4 h-4 text-[#8b5cf6]" />}
-              title="AI-Powered Match"
-              description="Your tailoring and pattern making skills align perfectly with this role's requirements"
-            />
-            <MatchPoint 
-              icon={<MapPin className="w-4 h-4 text-emerald-500" />}
-              title="Convenient Location"
-              description="Only 2.3 km from your location - easy commute saves time and money"
-            />
-            <MatchPoint 
-              icon={<Award className="w-4 h-4 text-[#8b5cf6]" />}
-              title="Experience Match"
-              description="Your intermediate skill level matches the position requirements"
-            />
+            {job.matchReasons.map((reason, i) => (
+              <MatchPoint 
+                key={i}
+                icon={getMatchIcon(reason.type)}
+                title={reason.title}
+                description={reason.description}
+              />
+            ))}
           </div>
         </div>
 
@@ -116,15 +156,15 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
           <div className="bg-[#18181b] border border-zinc-800/50 rounded-[20px] p-5 space-y-4">
             <div className="flex justify-between items-center text-sm">
               <span className="text-zinc-400">Base Pay</span>
-              <span className="font-medium text-white">₦40,000</span>
+              <span className="font-medium text-white">₦{job.basePay.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-zinc-400">Performance Bonus</span>
-              <span className="font-medium text-emerald-500">₦5,000</span>
+              <span className="font-medium text-emerald-500">₦{job.bonus.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center text-sm border-t border-zinc-800/50 pt-4">
               <span className="font-semibold text-white">Total Pay</span>
-              <span className="font-bold text-[#8b5cf6]">₦45,000</span>
+              <span className="font-bold text-[#8b5cf6]">₦{job.pay.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -134,7 +174,7 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
           <h3 className="font-semibold text-sm mb-3">Safety & Trust</h3>
           <div className="bg-[#18181b] border border-zinc-800/50 rounded-[20px] p-5 space-y-4">
             <SafetyPoint title="Verified Employer" desc="Identity and business documents confirmed" />
-            <SafetyPoint title="Secure Payment" desc="Weekly payments protected by Oloja" />
+            <SafetyPoint title="Secure Payment" desc="Payments protected by Oloja escrow system" />
             <SafetyPoint title="Work Agreement" desc="Digital contract protects both parties" />
           </div>
         </div>

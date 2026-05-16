@@ -205,12 +205,52 @@ export function PersonalInfoStep({
             <Calendar className="w-4 h-4 text-[#8b5cf6]" />
             Date of Birth
           </label>
-          <input
-            type="date"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.dob ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
-          />
+          <div className="flex gap-3">
+            {/* Month */}
+            <select
+              value={dob ? dob.slice(5, 7) : ""}
+              onChange={(e) => {
+                const [, , dd] = dob ? dob.split("-") : ["", "", ""];
+                const [yyyy] = dob ? dob.split("-") : [""];
+                setDob(`${yyyy || "2000"}-${e.target.value}-${dd || "01"}`);
+              }}
+              className={`flex-1 bg-zinc-50 dark:bg-[#18181b] border ${errors.dob ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-3 outline-none transition-all text-sm appearance-none`}
+            >
+              <option value="" disabled>Month</option>
+              {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map((m, i) => (
+                <option key={m} value={String(i + 1).padStart(2, "0")}>{m}</option>
+              ))}
+            </select>
+            {/* Day */}
+            <select
+              value={dob ? dob.slice(8, 10) : ""}
+              onChange={(e) => {
+                const [yyyy, mm] = dob ? dob.split("-") : ["", ""];
+                setDob(`${yyyy || "2000"}-${mm || "01"}-${e.target.value}`);
+              }}
+              className={`w-[72px] bg-zinc-50 dark:bg-[#18181b] border ${errors.dob ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-3 outline-none transition-all text-sm appearance-none`}
+            >
+              <option value="" disabled>Day</option>
+              {Array.from({ length: 31 }, (_, i) => (
+                <option key={i + 1} value={String(i + 1).padStart(2, "0")}>{i + 1}</option>
+              ))}
+            </select>
+            {/* Year */}
+            <select
+              value={dob ? dob.slice(0, 4) : ""}
+              onChange={(e) => {
+                const [, mm, dd] = dob ? dob.split("-") : ["", "", ""];
+                setDob(`${e.target.value}-${mm || "01"}-${dd || "01"}`);
+              }}
+              className={`w-[90px] bg-zinc-50 dark:bg-[#18181b] border ${errors.dob ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-3 outline-none transition-all text-sm appearance-none`}
+            >
+              <option value="" disabled>Year</option>
+              {Array.from({ length: 80 }, (_, i) => {
+                const y = new Date().getFullYear() - i;
+                return <option key={y} value={String(y)}>{y}</option>;
+              })}
+            </select>
+          </div>
           {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
         </div>
 

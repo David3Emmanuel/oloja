@@ -36,6 +36,7 @@ export default function AppFlow() {
   const [currentView, setCurrentView] = useState<ViewState>("onboarding");
   const [currentStep, setCurrentStep] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const navigate = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setUser } = useUser();
@@ -92,7 +93,9 @@ export default function AppFlow() {
           brandName,
           phone,
           location,
-          dob,
+          dob: dob
+            ? `${dob.slice(5, 7)}/${dob.slice(8, 10)}/${dob.slice(2, 4)}`
+            : '',
           gender,
           address,
           languages,
@@ -283,7 +286,7 @@ export default function AppFlow() {
               transition={viewTransition}
               className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto"
             >
-              <JobDetailsScreen onBack={() => setCurrentView("dashboard")} />
+              <JobDetailsScreen jobId={selectedJobId || undefined} onBack={() => setCurrentView("dashboard")} />
             </motion.div>
           )}
         </AnimatePresence>
