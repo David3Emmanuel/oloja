@@ -24,7 +24,10 @@ export class UsersService {
     })
 
     if (!squadAccount?.data) {
-      console.error('Squad createVirtualAccount failed or returned no data:', squadAccount)
+      console.error(
+        'Squad createVirtualAccount failed or returned no data:',
+        squadAccount,
+      )
     }
     const va = (squadAccount?.data ?? {}) as Record<string, unknown>
     const user = await this.prisma.user.create({
