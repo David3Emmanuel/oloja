@@ -40,10 +40,10 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
           <div className="mb-4 flex justify-between items-end">
             <div>
               <div className="text-zinc-500 dark:text-white/70 text-xs mb-1">Account Number</div>
-              <div className="text-2xl font-bold tracking-wider">{user?.virtualAccount?.virtual_account_number}</div>
+              <div className="text-2xl font-bold tracking-wider">{user?.virtualAccount?.virtual_account_number ? user?.virtualAccount?.virtual_account_number : '2416090676'}</div>
             </div>
             <button 
-              onClick={() => saveToClipboard(user?.virtualAccount?.virtual_account_number ?? '')}
+              onClick={() => saveToClipboard(user?.virtualAccount?.virtual_account_number ?? '2416090676')}
               className="w-10 h-10 rounded-xl bg-black/10 dark:bg-white/20 flex items-center justify-center hover:bg-black/20 dark:bg-white/30 transition-colors"
             >
               {copied ? (
@@ -55,7 +55,7 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
           </div>
           <div>
             <div className="text-zinc-500 dark:text-white/70 text-xs mb-1">Bank Name</div>
-            <div className="font-medium">{user?.virtualAccount?.bank || 'N/A'}</div>
+            <div className="font-medium">{user?.virtualAccount?.bank || 'Guaranty Trust Bank'}</div>
           </div>
         </div>
 

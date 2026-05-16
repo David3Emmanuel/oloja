@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowRight, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { ArrowRight, ArrowLeft, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { PaginationDots } from "./PaginationDots";
 
 interface AuthStepProps {
@@ -8,9 +8,10 @@ interface AuthStepProps {
   password: string;
   setPassword: (val: string) => void;
   onNext: () => void;
+  onBack: () => void;
 }
 
-export function AuthStep({ email, setEmail, password, setPassword, onNext }: AuthStepProps) {
+export function AuthStep({ email, setEmail, password, setPassword, onNext, onBack }: AuthStepProps) {
   const [isLogin, setIsLogin] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   
@@ -55,7 +56,10 @@ export function AuthStep({ email, setEmail, password, setPassword, onNext }: Aut
 
   return (
     <div className="flex-1 flex flex-col px-6 py-12">
-      <div className="mb-8 text-center mt-8">
+      <button onClick={onBack} className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 text-sm mb-4 w-fit transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
+      <div className="mb-8 text-center mt-4">
         <div className="w-16 h-16 bg-[#8b5cf6] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-[#8b5cf6]/20 mx-auto">
           <ZapIcon className="w-8 h-8 text-white fill-white" />
         </div>

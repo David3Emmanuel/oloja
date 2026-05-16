@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Briefcase, Store } from "lucide-react";
+import { ArrowRight, ArrowLeft, Briefcase, Store } from "lucide-react";
 import { PaginationDots } from "./PaginationDots";
 import { Role } from "./types";
 
@@ -7,11 +7,15 @@ interface RoleStepProps {
   role: Role;
   setRole: (role: Role) => void;
   onNext: () => void;
+  onBack: () => void;
 }
 
-export function RoleStep({ role, setRole, onNext }: RoleStepProps) {
+export function RoleStep({ role, setRole, onNext, onBack }: RoleStepProps) {
   return (
     <div className="flex-1 flex flex-col px-6 py-12">
+      <button onClick={onBack} className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 text-sm mb-4 w-fit transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 tracking-tight">How would you like to use the platform?</h1>
         <p className="text-zinc-500 dark:text-zinc-400">Choose the option that best describes you</p>
@@ -63,8 +67,8 @@ export function RoleStep({ role, setRole, onNext }: RoleStepProps) {
           disabled={!role}
           className={`w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all ${
             role
-              ? "bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 dark:hover:bg-zinc-800 active:scale-[0.98]"
-              : "bg-[#18181b]/50 dark:bg-[#18181b]/50 text-zinc-500 cursor-not-allowed"
+              ? "bg-[#8b5cf6] dark:bg-[#8b5cf6] text-white hover:bg-zinc-800 dark:hover:bg-zinc-800 active:scale-[0.98]"
+              : "bg-[#8b5cf6]/50 dark:bg-[#8b5cf6]/50 text-zinc-500 cursor-not-allowed"
           }`}
         >
           Continue <ArrowRight className="w-5 h-5" />

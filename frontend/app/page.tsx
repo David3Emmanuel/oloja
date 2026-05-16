@@ -45,6 +45,7 @@ export default function AppFlow() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role>(null);
   const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [bvn, setBvn] = useState("");
   const [brandName, setBrandName] = useState("");
@@ -66,6 +67,12 @@ export default function AppFlow() {
     }
   };
 
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
   const handleOnboardingComplete = async () => {
     setIsSubmitting(true);
     try {
@@ -79,6 +86,7 @@ export default function AppFlow() {
           password,
           role,
           firstName,
+          middleName,
           lastName,
           bvn,
           brandName,
@@ -158,14 +166,17 @@ export default function AppFlow() {
                       password={password}
                       setPassword={setPassword}
                       onNext={nextStep}
+                      onBack={prevStep}
                     />
                   )}
-                  {currentStep === 2 && <ConfirmationStep email={email} onNext={nextStep} />}
-                  {currentStep === 3 && <RoleStep role={role} setRole={setRole} onNext={nextStep} />}
+                  {currentStep === 2 && <ConfirmationStep email={email} onNext={nextStep} onBack={prevStep} />}
+                  {currentStep === 3 && <RoleStep role={role} setRole={setRole} onNext={nextStep} onBack={prevStep} />}
                   {currentStep === 4 && (
                     <PersonalInfoStep
                       firstName={firstName}
                       setFirstName={setFirstName}
+                      middleName={middleName}
+                      setMiddleName={setMiddleName}
                       lastName={lastName}
                       setLastName={setLastName}
                       bvn={bvn}
@@ -183,6 +194,7 @@ export default function AppFlow() {
                       address={address}
                       setAddress={setAddress}
                       onNext={nextStep}
+                      onBack={prevStep}
                     />
                   )}
                   {currentStep === 5 && (
@@ -192,6 +204,7 @@ export default function AppFlow() {
                       skills={skills}
                       setSkills={setSkills}
                       onNext={nextStep}
+                      onBack={prevStep}
                     />
                   )}
                   {currentStep === 6 && (
@@ -206,6 +219,7 @@ export default function AppFlow() {
                       setWorkDistance={setWorkDistance}
                       onComplete={handleOnboardingComplete}
                       isSubmitting={isSubmitting}
+                      onBack={prevStep}
                     />
                   )}
                 </motion.div>

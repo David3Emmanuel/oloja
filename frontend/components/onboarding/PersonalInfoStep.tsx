@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { ArrowRight, User, Tag, Phone, MapPin, Shield, Calendar, Users, Home } from "lucide-react";
+import { ArrowRight, ArrowLeft, User, Tag, Phone, MapPin, Shield, Calendar, Users, Home, Eye, EyeOff } from "lucide-react";
 
 export type Gender = "1" | "2" | null;
 
 interface PersonalInfoStepProps {
   firstName: string;
   setFirstName: (v: string) => void;
+  middleName: string;
+  setMiddleName: (v: string) => void;
   lastName: string;
   setLastName: (v: string) => void;
   bvn: string;
@@ -23,12 +25,14 @@ interface PersonalInfoStepProps {
   address: string;
   setAddress: (v: string) => void;
   onNext: () => void;
+  onBack: () => void;
 }
 
 export function PersonalInfoStep({
-  firstName, setFirstName, lastName, setLastName, bvn, setBvn, brandName, setBrandName, phone, setPhone, location, setLocation, dob, setDob, gender, setGender, address, setAddress, onNext
+  firstName, setFirstName, middleName, setMiddleName, lastName, setLastName, bvn, setBvn, brandName, setBrandName, phone, setPhone, location, setLocation, dob, setDob, gender, setGender, address, setAddress, onNext, onBack
 }: PersonalInfoStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showBvn, setShowBvn] = useState(false);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -78,6 +82,9 @@ export function PersonalInfoStep({
 
   return (
     <div className="flex-1 flex flex-col px-6 py-12">
+      <button onClick={onBack} className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 text-sm mb-4 w-fit transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 tracking-tight">Let's get to know you</h1>
         <p className="text-zinc-500 dark:text-zinc-400">We'll use this to connect you with the right opportunities</p>
@@ -123,17 +130,40 @@ export function PersonalInfoStep({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
-            <Shield className="w-4 h-4 text-[#8b5cf6]" />
-            BVN
+            <User className="w-4 h-4 text-[#8b5cf6]" />
+            Middle Name
           </label>
           <input
             type="text"
-            value={bvn}
-            onChange={(e) => setBvn(e.target.value)}
-            placeholder="11-digit BVN"
-            maxLength={11}
-            className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.bvn ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
+            value={middleName}
+            onChange={(e) => setMiddleName(e.target.value)}
+            placeholder="Middle name"
+            className="w-full bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] rounded-xl py-4 px-4 outline-none transition-all"
           />
+        </div>
+
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
+            <Shield className="w-4 h-4 text-[#8b5cf6]" />
+            BVN
+          </label>
+          <div className="relative">
+            <input
+              type={showBvn ? "text" : "password"}
+              value={bvn}
+              onChange={(e) => setBvn(e.target.value)}
+              placeholder="11-digit BVN"
+              maxLength={11}
+              className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.bvn ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 pr-12 outline-none transition-all`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowBvn(!showBvn)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+            >
+              {showBvn ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
           {errors.bvn && <p className="text-red-500 text-xs mt-1">{errors.bvn}</p>}
           <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 leading-tight">
             Your BVN is strictly required to securely register your wallet. We do not use it for any malicious purposes.
@@ -242,7 +272,7 @@ export function PersonalInfoStep({
       <div className="mt-8 pt-4">
         <button
           onClick={handleSubmit}
-          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 active:scale-[0.98]"
+          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#8b5cf6] dark:bg-[#8b5cf6] text-white hover:bg-[#8b5cf6]/70 active:scale-[0.98]"
         >
           Continue <ArrowRight className="w-5 h-5" />
         </button>
