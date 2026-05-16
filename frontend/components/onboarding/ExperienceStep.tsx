@@ -12,10 +12,11 @@ interface ExperienceStepProps {
   workDistance: string;
   setWorkDistance: (distance: string) => void;
   onComplete: () => void;
+  isSubmitting?: boolean;
 }
 
 export function ExperienceStep({
-  experience, setExperience, jobType, setJobType, workType, setWorkType, workDistance, setWorkDistance, onComplete
+  experience, setExperience, jobType, setJobType, workType, setWorkType, workDistance, setWorkDistance, onComplete, isSubmitting
 }: ExperienceStepProps) {
   
   const experienceOptions: { id: ExperienceLevel; label: string; desc: string }[] = [
@@ -137,9 +138,10 @@ export function ExperienceStep({
       <div className="mt-8 pt-4">
         <button
           onClick={onComplete}
-          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 active:scale-[0.98]"
+          disabled={isSubmitting}
+          className="w-full py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all bg-[#18181b] dark:bg-[#18181b] text-white hover:bg-zinc-800 active:scale-[0.98] disabled:opacity-70"
         >
-          Complete Setup <ArrowRight className="w-5 h-5" />
+          {isSubmitting ? "Completing..." : "Complete Setup"} <ArrowRight className="w-5 h-5" />
         </button>
         <div className="flex justify-center items-center gap-2 mt-6">
           <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />

@@ -1,16 +1,51 @@
-import React, { useState } from "react";
-import { Menu, Eye, Download, Send, Plus, PiggyBank, BarChart3, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, EyeOff } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Menu, Eye, Download, Send, Plus, PiggyBank, BarChart3, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, EyeOff, Shield } from "lucide-react";
+import { useUser } from "@/context/UserContext";
+
+const API_BASE = "https://oloja-production.up.railway.app";
 
 interface WalletScreenProps {
   onOpenMenu: () => void;
 }
 
 export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
+  const { user } = useUser();
   const [showWalletAmount, setShowWalletAmount] = useState(false);
+  const [trustScore, setTrustScore] = useState<number | null>(null);
+  const [transactionCount, setTransactionCount] = useState<number>(0);
+  const [isLoadingTrust, setIsLoadingTrust] = useState(true);
+
+  const walletBalance = "₦0.00";
 
   const handleShowWalletAmount = () => {
     setShowWalletAmount(prev => !prev);
   };
+
+  // Fetch trust score for the wallet view
+  useEffect(() => {
+    const fetchTrustScore = async () => {
+      const acctNum = user?.virtualAccount?.virtual_account_number;
+      if (!acctNum) {
+        setTrustScore(user?.trustScore ?? null);
+        setIsLoadingTrust(false);
+        return;
+      }
+      try {
+        const response = await fetch(`${API_BASE}/api/trust/${acctNum}`);
+        if (!response.ok) throw new Error('Failed to fetch trust score');
+        const data = await response.json();
+        setTrustScore(data.trustScore);
+        setTransactionCount(data.transactionCount ?? 0);
+      } catch (err) {
+        console.error(err);
+        setTrustScore(user?.trustScore ?? null);
+      } finally {
+        setIsLoadingTrust(false);
+      }
+    };
+    fetchTrustScore();
+  }, [user]);
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100 relative overflow-x-hidden">
       {/* Header */}
@@ -32,7 +67,7 @@ export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
             </button>
           </div>
           <div className="text-[38px] leading-none font-bold tracking-tight mb-8 relative z-10 text-white">
-            {showWalletAmount ? '₦12,450.00' : '**********'}
+            {showWalletAmount ? walletBalance : '**********'}
           </div>
           
           <div className="flex gap-3 relative z-10">
@@ -51,6 +86,33 @@ export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/3 translate-x-1/4 pointer-events-none" />
         </div>
 
+        {/* Account Info */}
+        <div className="bg-[#18181b] border border-zinc-800/50 rounded-[20px] p-5 flex flex-col gap-3">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-xl bg-[#8b5cf6]/10 flex items-center justify-center text-[#8b5cf6]">
+              <Shield className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm">Account Details</h3>
+              <p className="text-zinc-500 text-xs">{user?.virtualAccount?.bank || "Virtual Account"}</p>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-zinc-500">Account Name</span>
+            <span className="font-medium">{user?.virtualAccount?.account_name || `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || "N/A"}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-zinc-500">Account Number</span>
+            <span className="font-medium font-mono">{user?.virtualAccount?.virtual_account_number || "N/A"}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-zinc-500">Trust Score</span>
+            <span className="font-medium text-emerald-500">
+              {isLoadingTrust ? "..." : trustScore !== null ? trustScore : "N/A"}
+            </span>
+          </div>
+        </div>
+
         {/* Savings Progress */}
         <div className="bg-[#18181b] border border-zinc-800/50 rounded-[20px] p-5 flex flex-col">
           <div className="flex justify-between items-start mb-4">
@@ -64,17 +126,17 @@ export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-emerald-500 font-medium text-sm">₦8,200</div>
+              <div className="text-emerald-500 font-medium text-sm">₦0</div>
               <div className="text-zinc-500 text-[10px]">Total saved</div>
             </div>
           </div>
           <div className="flex gap-1 mb-3">
-            <div className="h-1.5 flex-[4] bg-emerald-500 rounded-full"></div>
-            <div className="h-1.5 flex-[6] bg-zinc-800 rounded-full"></div>
+            <div className="h-1.5 flex-[0] bg-emerald-500 rounded-full"></div>
+            <div className="h-1.5 flex-[10] bg-zinc-800 rounded-full"></div>
           </div>
           <div className="flex justify-between items-start">
             <p className="text-zinc-500 text-[11px] max-w-[200px] leading-relaxed">
-              Complete 2 more jobs to unlock 8% monthly interest on savings
+              Complete jobs to unlock 8% monthly interest on savings
             </p>
             <button className="text-[#8b5cf6] text-[11px] font-medium hover:underline shrink-0">
               Learn more
@@ -90,21 +152,23 @@ export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
             </div>
             <div>
               <h3 className="font-semibold text-sm">Financial Activity</h3>
-              <p className="text-zinc-500 text-xs">Last 30 days</p>
+              <p className="text-zinc-500 text-xs">
+                {transactionCount > 0 ? `${transactionCount} transactions recorded` : "No activity yet"}
+              </p>
             </div>
           </div>
           <div className="space-y-4">
             <div className="flex justify-between items-center text-sm">
               <span className="text-zinc-500">Total Earned</span>
-              <span className="font-medium text-emerald-500">₦45,000</span>
+              <span className="font-medium text-emerald-500">₦0</span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-zinc-500">Total Saved</span>
-              <span className="font-medium text-[#8b5cf6]">₦8,200</span>
+              <span className="font-medium text-[#8b5cf6]">₦0</span>
             </div>
             <div className="flex justify-between items-center text-sm pt-4 border-t border-zinc-800/50">
               <span className="text-zinc-500">Available Now</span>
-              <span className="font-semibold">₦12,450</span>
+              <span className="font-semibold">₦0</span>
             </div>
           </div>
         </div>
@@ -117,47 +181,15 @@ export function WalletScreen({ onOpenMenu }: WalletScreenProps) {
           </div>
           
           <div className="space-y-3">
-            <div className="text-zinc-500 text-[11px] font-medium mb-1">Today</div>
-            <Transaction
-              icon={<ArrowDownLeft className="w-4 h-4 text-emerald-500" />}
-              title="Job Payment - Fashion..."
-              time="10:30 AM"
-              amount="+₦45,000"
-              status="Completed"
-              statusColor="text-emerald-500"
-              statusIcon={<CheckCircle2 className="w-3 h-3 mr-1" />}
-            />
-            <Transaction
-              icon={<ArrowUpRight className="w-4 h-4 text-[#8b5cf6]" />}
-              title="Savings Transfer"
-              time="9:15 AM"
-              amount="-₦5,000"
-              status="Completed"
-              statusColor="text-emerald-500"
-              statusIcon={<CheckCircle2 className="w-3 h-3 mr-1" />}
-            />
-            
-            <div className="text-zinc-500 text-[11px] font-medium mb-1 mt-5">May 12</div>
-            <Transaction
-              icon={<ArrowUpRight className="w-4 h-4 text-[#8b5cf6]" />}
-              title="Withdrawal Reques"
-              time="Yesterday"
-              amount="-₦20,000"
-              status="Pending"
-              statusColor="text-[#8b5cf6]"
-              statusIcon={<Clock className="w-3 h-3 mr-1" />}
-            />
-
-            <div className="text-zinc-500 text-[11px] font-medium mb-1 mt-5">May 10</div>
-            <Transaction
-              icon={<ArrowDownLeft className="w-4 h-4 text-emerald-500" />}
-              title="Job Payment - Textile W"
-              time="2:45 PM"
-              amount="+₦38,000"
-              status="Completed"
-              statusColor="text-emerald-500"
-              statusIcon={<CheckCircle2 className="w-3 h-3 mr-1" />}
-            />
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-800/50 flex items-center justify-center mb-4">
+                <Clock className="w-6 h-6 text-zinc-600" />
+              </div>
+              <p className="text-zinc-500 text-sm font-medium mb-1">No transactions yet</p>
+              <p className="text-zinc-600 text-xs max-w-[220px]">
+                Your transaction history will appear here once you start earning
+              </p>
+            </div>
           </div>
         </div>
       </div>

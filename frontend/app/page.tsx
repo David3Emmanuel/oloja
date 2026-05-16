@@ -17,6 +17,7 @@ import { WalletScreen } from "@/components/dashboard/WalletScreen";
 import { JobDetailsScreen } from "@/components/dashboard/JobDetailsScreen";
 import { MenuDrawer } from "@/components/dashboard/MenuDrawer";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 
 const steps = [
   "Welcome",
@@ -35,8 +36,12 @@ export default function AppFlow() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUser } = useUser();
 
   // State for forms
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -57,9 +62,49 @@ export default function AppFlow() {
     }
   };
 
-  const handleOnboardingComplete = () => {
-    console.log({ role, firstName, lastName, bvn, brandName, phone, location, languages, skills, experience, jobType, workType, workDistance });
-    setCurrentView("wallet_success");
+  const handleOnboardingComplete = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('https://oloja-production.up.railway.app/api/users/onboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          role,
+          firstName,
+          lastName,
+          bvn,
+          brandName,
+          phone,
+          location,
+          languages,
+          skills,
+          experience,
+          jobType,
+          workType,
+          workDistance,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Onboarding failed');
+      }
+
+      const data = await response.json();
+      console.log('Onboarding successful:', data);
+      
+      setUser(data);
+
+      setCurrentView("wallet_success");
+    } catch (error) {
+      console.error('Error during onboarding:', error);
+      alert('Failed to complete setup. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const viewVariants = {
@@ -99,8 +144,16 @@ export default function AppFlow() {
                   className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden no-scrollbar w-full max-w-md mx-auto"
                 >
                   {currentStep === 0 && <WelcomeStep onNext={nextStep} />}
-                  {currentStep === 1 && <AuthStep onNext={nextStep} />}
-                  {currentStep === 2 && <ConfirmationStep onNext={nextStep} />}
+                  {currentStep === 1 && (
+                    <AuthStep
+                      email={email}
+                      setEmail={setEmail}
+                      password={password}
+                      setPassword={setPassword}
+                      onNext={nextStep}
+                    />
+                  )}
+                  {currentStep === 2 && <ConfirmationStep email={email} onNext={nextStep} />}
                   {currentStep === 3 && <RoleStep role={role} setRole={setRole} onNext={nextStep} />}
                   {currentStep === 4 && (
                     <PersonalInfoStep
@@ -139,6 +192,7 @@ export default function AppFlow() {
                       workDistance={workDistance}
                       setWorkDistance={setWorkDistance}
                       onComplete={handleOnboardingComplete}
+                      isSubmitting={isSubmitting}
                     />
                   )}
                 </motion.div>
