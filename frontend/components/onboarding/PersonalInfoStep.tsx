@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { ArrowRight, User, Tag, Phone, MapPin, Shield } from "lucide-react";
+import { ArrowRight, User, Tag, Phone, MapPin, Shield, Calendar, Users, Home } from "lucide-react";
+
+export type Gender = "1" | "2" | null;
 
 interface PersonalInfoStepProps {
   firstName: string;
@@ -14,11 +16,17 @@ interface PersonalInfoStepProps {
   setPhone: (v: string) => void;
   location: string;
   setLocation: (v: string) => void;
+  dob: string;
+  setDob: (v: string) => void;
+  gender: Gender;
+  setGender: (v: Gender) => void;
+  address: string;
+  setAddress: (v: string) => void;
   onNext: () => void;
 }
 
 export function PersonalInfoStep({
-  firstName, setFirstName, lastName, setLastName, bvn, setBvn, brandName, setBrandName, phone, setPhone, location, setLocation, onNext
+  firstName, setFirstName, lastName, setLastName, bvn, setBvn, brandName, setBrandName, phone, setPhone, location, setLocation, dob, setDob, gender, setGender, address, setAddress, onNext
 }: PersonalInfoStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -44,6 +52,18 @@ export function PersonalInfoStep({
 
     if (!location.trim()) {
       newErrors.location = "Location is required";
+    }
+
+    if (!dob.trim()) {
+      newErrors.dob = "Date of birth is required";
+    }
+
+    if (!gender) {
+      newErrors.gender = "Gender is required";
+    }
+
+    if (!address.trim()) {
+      newErrors.address = "Address is required";
     }
 
     setErrors(newErrors);
@@ -148,6 +168,59 @@ export function PersonalInfoStep({
             className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.phone ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
           />
           {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+        </div>
+
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
+            <Calendar className="w-4 h-4 text-[#8b5cf6]" />
+            Date of Birth
+          </label>
+          <input
+            type="date"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+            className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.dob ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
+          />
+          {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
+        </div>
+
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
+            <Users className="w-4 h-4 text-[#8b5cf6]" />
+            Gender
+          </label>
+          <div className="flex gap-3">
+            {([{ label: "Male", value: "1" }, { label: "Female", value: "2" }] as const).map((g) => (
+              <button
+                key={g.value}
+                type="button"
+                onClick={() => setGender(g.value)}
+                className={`flex-1 py-3.5 rounded-xl border text-sm font-medium transition-all ${
+                  gender === g.value
+                    ? "bg-[#8b5cf6]/20 border-[#8b5cf6] text-zinc-900 dark:text-white"
+                    : "bg-zinc-50 dark:bg-[#18181b] border-zinc-200 dark:border-zinc-800 text-zinc-500"
+                }`}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+          {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender}</p>}
+        </div>
+
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
+            <Home className="w-4 h-4 text-[#8b5cf6]" />
+            Address
+          </label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="e.g., 12 Adeola Odeku St, Victoria Island"
+            className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.address ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
+          />
+          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
         </div>
 
         <div>

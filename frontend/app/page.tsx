@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Role, ExperienceLevel, JobType, WorkType } from "@/components/onboarding/types";
+import { Gender } from "@/components/onboarding/PersonalInfoStep";
 import { WelcomeStep } from "@/components/onboarding/WelcomeStep";
 import { AuthStep } from "@/components/onboarding/AuthStep";
 import { ConfirmationStep } from "@/components/onboarding/ConfirmationStep";
@@ -49,6 +50,9 @@ export default function AppFlow() {
   const [brandName, setBrandName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState<Gender>(null);
+  const [address, setAddress] = useState("");
   const [languages, setLanguages] = useState<string[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
   const [experience, setExperience] = useState<ExperienceLevel>(null);
@@ -80,6 +84,9 @@ export default function AppFlow() {
           brandName,
           phone,
           location,
+          dob,
+          gender,
+          address,
           languages,
           skills,
           experience,
@@ -169,6 +176,12 @@ export default function AppFlow() {
                       setPhone={setPhone}
                       location={location}
                       setLocation={setLocation}
+                      dob={dob}
+                      setDob={setDob}
+                      gender={gender}
+                      setGender={setGender}
+                      address={address}
+                      setAddress={setAddress}
                       onNext={nextStep}
                     />
                   )}
