@@ -1,11 +1,21 @@
 import React from "react";
 import { ArrowLeft, Star, MapPin, Clock, Calendar, TrendingUp, ShieldCheck, CheckCircle2, Building2, Zap, Award } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface JobDetailsScreenProps {
   onBack: () => void;
 }
 
 export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
+  const router = useRouter();
+
+  const handleApply = () => {
+    const recipient = encodeURIComponent("Dalo Events");
+    const job = encodeURIComponent("Wedding Photography");
+    const date = encodeURIComponent("July 6th");
+    router.push(`/messages?recipient=${recipient}&job=${job}&date=${date}`);
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#09090b] text-zinc-100 relative">
       {/* Header */}
@@ -134,7 +144,7 @@ export function JobDetailsScreen({ onBack }: JobDetailsScreenProps) {
       {/* Apply Button Footer */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#09090b] via-[#09090b] to-transparent pt-12 pointer-events-none">
         <div className="max-w-2xl mx-auto pointer-events-auto">
-          <button className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-4 rounded-2xl font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl shadow-black/50">
+          <button onClick={handleApply} className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-4 rounded-2xl font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl shadow-black/50">
             <CheckCircle2 className="w-5 h-5" /> Apply Now
           </button>
         </div>

@@ -173,7 +173,7 @@ export default function AppFlow() {
               <DashboardScreen
                 onOpenMenu={() => setIsMenuOpen(true)}
                 onViewWallet={() => navigate.push("/wallet")}
-                onViewJob={() => setCurrentView("job_details")}
+                onViewJob={(id) => setCurrentView("job_details")}
               />
             </motion.div>
           )}
