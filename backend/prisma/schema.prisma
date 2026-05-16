@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id
+  firstName    String
+  lastName     String
+  email        String?
+  phone        String   @unique
+  role         String?
+  brandName    String?
+  location     String
+  languages    String[]
+  skills       String[]
+  experience   String?
+  jobType      String?
+  workType     String?
+  workDistance String?
+  accountNumber String?
+  bankName     String?
+  accountName  String?
+  trustScore   Int      @default(0)
+  createdAt    DateTime @default(now())
+}
