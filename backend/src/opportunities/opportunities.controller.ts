@@ -11,42 +11,21 @@ export class OpportunitiesController {
   @Get('match')
   @ApiOperation({ summary: 'Find matching gig opportunities for a worker' })
   @ApiQuery({
-    name: 'skills',
-    required: false,
-    description: 'Comma-separated list of skills',
-    example: 'plumbing,tiling',
-  })
-  @ApiQuery({
-    name: 'location',
-    required: false,
-    description: 'Worker location used for proximity matching',
-    example: 'Lagos',
-  })
-  @ApiQuery({
-    name: 'languages',
-    required: false,
-    description: 'Comma-separated preferred languages',
-    example: 'English,Yoruba',
+    name: 'userId',
+    required: true,
+    description: 'The user ID returned from /users/onboard',
+    example: 'USR-1748000000000',
   })
   @ApiResponse({
     status: 200,
     type: OpportunityMatchResponseDto,
-    description:
-      'Ranked opportunity matches; fallback:true when AI service was unreachable',
+    description: 'Opportunities ranked by AI match score',
   })
   @ApiResponse({
-    status: 500,
-    description: 'AI_SERVICE_URL environment variable not configured',
+    status: 404,
+    description: 'User not found',
   })
-  match(
-    @Query('skills') skills: string,
-    @Query('location') location: string,
-    @Query('languages') languages: string,
-  ) {
-    return this.opportunitiesService.match(
-      skills ? skills.split(',') : [],
-      location,
-      languages ? languages.split(',') : [],
-    )
+  match(@Query('userId') userId: string) {
+    return this.opportunitiesService.match(userId)
   }
 }

@@ -14,6 +14,8 @@ export interface ScoredOpportunity {
   [key: string]: unknown
 }
 
+const SHORTLIST_LIMIT = 20
+
 @Injectable()
 export class MatchingService {
   private readonly client: Anthropic
@@ -30,14 +32,60 @@ export class MatchingService {
     languages: string[],
     opportunities: any[],
   ): Promise<ScoredOpportunity[]> {
+    const shortlist = this._preFilter(skills, location, opportunities)
     try {
-      return await this._claudeMatch(skills, location, languages, opportunities)
+      return await this._claudeMatch(skills, location, languages, shortlist)
     } catch {
-      return this._algorithmicMatch(skills, location, languages, opportunities)
+      return this._algorithmicMatch(skills, location, languages, shortlist)
     }
   }
 
-  // ── Claude-powered matching ───────────────────────────────────────────────
+  // ── Stage 1: stemmed pre-filter ───────────────────────────────────────────
+
+  private _preFilter(skills: string[], location: string, opportunities: any[]): any[] {
+    const userStems = new Set(skills.map((s) => this._stem(s)))
+
+    return opportunities
+      .map((opp) => {
+        const oppStems = new Set(((opp.skills ?? []) as string[]).map((s) => this._stem(s)))
+        const skillScore = this._stemmedJaccard(userStems, oppStems)
+        const locScore = this._locationScore(location, opp.location)
+        // Keep anything with any skill overlap, or strong location match
+        return { opp, preScore: 0.7 * skillScore + 0.3 * locScore }
+      })
+      .filter(({ preScore }) => preScore > 0)
+      .sort((a, b) => b.preScore - a.preScore)
+      .slice(0, SHORTLIST_LIMIT)
+      .map(({ opp }) => opp)
+  }
+
+  private _stemmedJaccard(a: Set<string>, b: Set<string>): number {
+    if (!a.size || !b.size) return 0
+    let intersection = 0
+    for (const stem of a) if (b.has(stem)) intersection++
+    return intersection / new Set([...a, ...b]).size
+  }
+
+  // Lightweight suffix-stripping stemmer tuned for trade/skill vocabulary.
+  // Suffixes ordered longest-first so "ation" wins over "ion", etc.
+  // Min stem length of 4 prevents over-stripping short root words.
+  private _stem(word: string): string {
+    const w = word.toLowerCase().trim()
+    const suffixes = [
+      'ication', 'ational', 'iness',
+      'ation', 'tion', 'ment', 'ness',
+      'ing', 'ian', 'ist', 'ity', 'ery', 'ery', 'ry',
+      'er', 'ed', 'al',
+    ]
+    for (const suffix of suffixes) {
+      if (w.endsWith(suffix) && w.length - suffix.length >= 4) {
+        return w.slice(0, -suffix.length)
+      }
+    }
+    return w
+  }
+
+  // ── Stage 2: Claude re-rank ───────────────────────────────────────────────
 
   private async _claudeMatch(
     skills: string[],
@@ -52,7 +100,7 @@ User profile:
 - Location: ${location}
 - Languages: ${languages.join(', ')}
 
-Opportunities:
+Opportunities (pre-filtered shortlist, ${opportunities.length} items):
 ${JSON.stringify(opportunities, null, 2)}
 
 For each opportunity, evaluate how well it matches the user's profile considering:
@@ -72,11 +120,8 @@ Return ONLY a valid JSON array with one object per opportunity in the same order
     })
 
     const text = (message.content[0] as { type: string; text: string }).text
-    const parsed: {
-      id: string
-      matchScore: number
-      matchReasons: MatchReason[]
-    }[] = JSON.parse(text)
+    const parsed: { id: string; matchScore: number; matchReasons: MatchReason[] }[] =
+      JSON.parse(text)
 
     const scoreMap = new Map(parsed.map((p) => [p.id, p]))
 
@@ -92,7 +137,7 @@ Return ONLY a valid JSON array with one object per opportunity in the same order
       .sort((a, b) => b.matchScore - a.matchScore)
   }
 
-  // ── Algorithmic fallback (Jaccard + weighted scoring) ─────────────────────
+  // ── Algorithmic fallback ──────────────────────────────────────────────────
 
   private _algorithmicMatch(
     skills: string[],
@@ -103,20 +148,13 @@ Return ONLY a valid JSON array with one object per opportunity in the same order
     return opportunities
       .map((opp) => ({
         ...opp,
-        matchScore: Math.round(
-          this._score(skills, location, languages, opp) * 100,
-        ),
+        matchScore: Math.round(this._score(skills, location, languages, opp) * 100),
         matchReasons: [],
       }))
       .sort((a, b) => b.matchScore - a.matchScore)
   }
 
-  private _score(
-    skills: string[],
-    location: string,
-    languages: string[],
-    opp: any,
-  ): number {
+  private _score(skills: string[], location: string, languages: string[], opp: any): number {
     return (
       0.55 * this._skillOverlap(skills, opp.skills) +
       0.25 * this._locationScore(location, opp.location) +
@@ -126,18 +164,15 @@ Return ONLY a valid JSON array with one object per opportunity in the same order
 
   private _skillOverlap(a: string[], b: string[]): number {
     if (!a.length || !b.length) return 0
-    const aSet = new Set(a.map((s) => s.toLowerCase()))
-    const bSet = new Set(b.map((s) => s.toLowerCase()))
-    const intersection = [...aSet].filter((s) => bSet.has(s)).length
-    const union = new Set([...aSet, ...bSet]).size
-    return intersection / union
+    const aStems = new Set(a.map((s) => this._stem(s)))
+    const bStems = new Set(b.map((s) => this._stem(s)))
+    return this._stemmedJaccard(aStems, bStems)
   }
 
   private _locationScore(userLoc: string, oppLoc: string): number {
     const u = userLoc.toLowerCase()
     const o = oppLoc.toLowerCase()
     if (u === o) return 1.0
-    // partial match — one contains the other (e.g. "Ikeja" in "Ikeja Lagos")
     if (u.includes(o) || o.includes(u)) return 0.7
     return 0.3
   }

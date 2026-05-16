@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
-import { HttpModule } from '@nestjs/axios'
 import { SquadService } from './squad.service'
+import { SquadController } from './squad.controller'
 
 @Module({
-  imports: [HttpModule],
   providers: [SquadService],
+  controllers: [SquadController],
   exports: [SquadService],
 })
 export class SquadModule {}

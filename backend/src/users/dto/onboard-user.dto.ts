@@ -15,6 +15,11 @@ export class OnboardUserDto {
   @IsOptional()
   email?: string
 
+  @ApiProperty({ example: 'Chisom', required: false })
+  @IsString()
+  @IsOptional()
+  middleName?: string
+
   @ApiProperty({ example: 'secret123', required: false })
   @IsString()
   @IsOptional()
@@ -30,6 +35,18 @@ export class OnboardUserDto {
   })
   @IsString()
   bvn: string
+
+  @ApiProperty({ example: '01/01/1990', description: 'Date of birth MM/DD/YYYY' })
+  @IsString()
+  dob: string
+
+  @ApiProperty({ example: '1', description: '1 = Male, 2 = Female', enum: ['1', '2'] })
+  @IsEnum(['1', '2'])
+  gender: '1' | '2'
+
+  @ApiProperty({ example: '12 Broad Street, Lagos' })
+  @IsString()
+  address: string
 
   @ApiProperty({ enum: ['find_jobs', 'hire_services'], required: false })
   @IsEnum(['find_jobs', 'hire_services'])

@@ -1,88 +1,83 @@
 import { Injectable } from '@nestjs/common'
-import { HttpService } from '@nestjs/axios'
-import { ConfigService } from '@nestjs/config'
-import { firstValueFrom } from 'rxjs'
+import CreateSquadClient from '@squadco/js'
 
 @Injectable()
 export class SquadService {
-  private readonly baseUrl: string
-  private readonly headers: Record<string, string>
+  private readonly squad: InstanceType<typeof CreateSquadClient>
 
-  constructor(
-    private readonly http: HttpService,
-    private readonly config: ConfigService,
-  ) {
-    this.baseUrl = this.config.getOrThrow('SQUAD_BASE_URL')
-    this.headers = {
-      Authorization: `Bearer ${this.config.getOrThrow('SQUAD_SECRET_KEY')}`,
-      'Content-Type': 'application/json',
-    }
+  constructor() {
+    this.squad = new CreateSquadClient(
+      process.env.SQUAD_PUBLIC_KEY as string,
+      process.env.SQUAD_PRIVATE_KEY as string,
+      process.env.NODE_ENV as 'production' | 'development',
+    )
   }
 
   async createVirtualAccount(data: {
     firstName: string
     lastName: string
+    middleName?: string
     email?: string
     phone: string
     bvn: string
+    dob: string
+    gender: '1' | '2'
+    address: string
   }) {
-    const res = await firstValueFrom(
-      this.http.post(
-        `${this.baseUrl}/virtual-account`,
-        {
-          first_name: data.firstName,
-          last_name: data.lastName,
-          mobile_num: data.phone,
-          email: data.email,
-          bvn: data.bvn,
-          is_permanent: true,
-          transaction_ref: `OLJ-${Date.now()}`,
-        },
-        { headers: this.headers },
-      ),
-    )
-    return res.data
+    return this.squad.createVirtualAccount({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      middleName: data.middleName ?? '',
+      mobileNumber: data.phone,
+      email: data.email ?? '',
+      bvn: data.bvn,
+      dob: data.dob,
+      gender: data.gender,
+      address: data.address,
+      customerIdentifier: data.phone,
+    })
   }
 
   async getTransactions(virtualAccountNumber: string) {
-    const res = await firstValueFrom(
-      this.http.get(
-        `${this.baseUrl}/virtual-account/transactions/${virtualAccountNumber}`,
-        { headers: this.headers },
-      ),
-    )
-    return res.data
+    const res = await this.squad.findAllMerchantTransactionsByFilter({
+      virtualAccount: virtualAccountNumber,
+    })
+
+    // Normalize to shape expected by TrustScoreService
+    const raw: any[] = (res as any)?.data ?? []
+    const data = raw.map((t) => ({
+      amount: (t.amount ?? 0) / 100, // kobo → naira
+      type: t.transaction_type ?? t.type ?? 'credit',
+      date: t.transaction_date ?? t.created_at ?? new Date().toISOString(),
+      status: t.transaction_status ?? t.status ?? 'successful',
+    }))
+
+    return { data }
   }
 
   async initiateTransfer(data: {
     accountNumber: string
     bankCode: string
+    accountName: string
     amount: number
     narration: string
   }) {
-    const res = await firstValueFrom(
-      this.http.post(
-        `${this.baseUrl}/payout/initiate`,
-        {
-          account_number: data.accountNumber,
-          bank_code: data.bankCode,
-          amount: data.amount * 100, // kobo
-          narration: data.narration,
-          transaction_ref: `OLJ-OUT-${Date.now()}`,
-          currency_id: 'NGN',
-        },
-        { headers: this.headers },
-      ),
-    )
-    return res.data
+    return this.squad.transferFunds({
+      transactionReference: `OLJ-OUT-${Date.now()}`,
+      amount: String(data.amount * 100), // naira → kobo
+      bankCode: data.bankCode,
+      accountNumber: data.accountNumber,
+      accountName: data.accountName,
+      currencyId: 'NGN',
+      remark: data.narration,
+    })
+  }
+
+  async getVirtualAccountBalance(accountNumber: string) {
+    return this.squad.getCustomerVirtualAccountDetails(accountNumber)
   }
 
   async getWalletBalance() {
-    const res = await firstValueFrom(
-      this.http.get(`${this.baseUrl}/merchant/balance`, {
-        headers: this.headers,
-      }),
-    )
-    return res.data
+    return this.squad.getWalletBalance('NGN')
   }
 }
