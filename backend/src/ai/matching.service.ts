@@ -47,7 +47,7 @@ export class MatchingService {
 
     return opportunities
       .map((opp) => {
-        const oppStems = new Set((opp.skills ?? []).map((s: string) => this._stem(s)))
+        const oppStems = new Set(((opp.skills ?? []) as string[]).map((s) => this._stem(s)))
         const skillScore = this._stemmedJaccard(userStems, oppStems)
         const locScore = this._locationScore(location, opp.location)
         // Keep anything with any skill overlap, or strong location match
