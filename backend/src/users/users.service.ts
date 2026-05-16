@@ -23,6 +23,9 @@ export class UsersService {
       address: dto.address,
     })
 
+    if (!squadAccount?.data) {
+      console.error('Squad createVirtualAccount failed or returned no data:', squadAccount)
+    }
     const va = (squadAccount?.data ?? {}) as Record<string, unknown>
     const user = await this.prisma.user.create({
       data: {
@@ -43,7 +46,7 @@ export class UsersService {
         jobType: dto.jobType,
         workType: dto.workType,
         workDistance: dto.workDistance,
-        accountNumber: String(va.account_number ?? ''),
+        accountNumber: String(va.virtual_account_number ?? ''),
         bankName: String(va.bank_name ?? ''),
         accountName: `${dto.firstName} ${dto.lastName}`,
         trustScore: 0,
