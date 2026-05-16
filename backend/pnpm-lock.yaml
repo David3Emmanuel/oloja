@@ -35,6 +35,9 @@ importers:
       '@prisma/client':
         specifier: ^7.8.0
         version: 7.8.0(prisma@7.8.0(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(typescript@5.9.3)
+      '@squadco/js':
+        specifier: ^1.3.7
+        version: 1.3.7(typescript@5.9.3)
       '@types/pg':
         specifier: ^8.20.0
         version: 8.20.0
@@ -987,6 +990,11 @@ packages:
 
   '@sinonjs/fake-timers@15.4.0':
     resolution: {integrity: sha512-DsG+8/LscQIQg68J6Ef3dv10u6nVyetYn923s3/sus5eaGfTo1of5WMZSLf0UJc9KDuKPilPH0UDJCjvNbDNCA==}
+
+  '@squadco/js@1.3.7':
+    resolution: {integrity: sha512-7nbF7I1ZelXsBNb/Ed/PouLmDiscnPRoWNJtYpmNBaeS3OqiJrroPGNjjIEV/83NcRx9M69V2Svd2mJiW9lzZQ==}
+    peerDependencies:
+      typescript: ^5.0.0
 
   '@stablelib/base64@1.0.1':
     resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
@@ -4609,6 +4617,14 @@ snapshots:
   '@sinonjs/fake-timers@15.4.0':
     dependencies:
       '@sinonjs/commons': 3.0.1
+
+  '@squadco/js@1.3.7(typescript@5.9.3)':
+    dependencies:
+      axios: 1.16.1
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - debug
+      - supports-color
 
   '@stablelib/base64@1.0.1': {}
 
