@@ -24,7 +24,7 @@ export class SquadService {
     gender: '1' | '2'
     address: string
   }) {
-    return this.squad.createVirtualAccount({
+    const response = await this.squad.createVirtualAccount({
       firstName: data.firstName,
       lastName: data.lastName,
       middleName: data.middleName ?? '',
@@ -36,6 +36,8 @@ export class SquadService {
       address: data.address,
       customerIdentifier: data.phone,
     })
+    console.log('Squad createVirtualAccount response:', response)
+    return response
   }
 
   async getTransactions(virtualAccountNumber: string) {
