@@ -16,9 +16,9 @@ export function DashboardScreen({ onOpenMenu, onViewWallet, onViewJob }: Dashboa
         <button onClick={onOpenMenu} className="p-2 -ml-2 text-zinc-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
           <Menu className="w-6 h-6" />
         </button>
-        <Link href="/profile" className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-[#8b5cf6] hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
+        {/* <Link href="/profile" className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-[#8b5cf6] hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
           <User className="w-5 h-5" />
-        </Link>
+        </Link> */}
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-8 no-scrollbar w-full max-w-7xl mx-auto">

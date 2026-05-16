@@ -123,7 +123,10 @@ export default function OpportunitiesPage() {
                     </div>
                   </div>
                   
-                  <button className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+                  <button 
+                    onClick={() => router.push(`/opportunities/${job.id}`)}
+                    className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                  >
                     View Details <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>

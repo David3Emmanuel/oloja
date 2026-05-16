@@ -64,18 +64,12 @@ export function MenuDrawer({ isOpen, onClose }: MenuDrawerProps) {
                 href="/growth"
                 onClick={onClose}
               />
-              <MenuItem
+              {/* <MenuItem
                 icon={<User className="w-5 h-5" />}
                 label="Profile"
                 href="/profile"
                 onClick={onClose}
-              />
-              <MenuItem
-                icon={<Settings className="w-5 h-5" />}
-                label="Settings"
-                href="/settings"
-                onClick={onClose}
-              />
+              /> */}
             </div>
           </motion.div>
         </>
