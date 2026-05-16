@@ -17,7 +17,7 @@ export function WelcomeStep({ onNext }: { onNext: () => void }) {
           Access opportunities, grow your income, and unlock financial inclusion.
         </p>
       </div>
-      <div className="mt-auto">
+      <div className="mt-10">
         <button
           onClick={onNext}
           className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-4 rounded-xl font-medium text-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98]"

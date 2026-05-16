@@ -1,9 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { CheckCircle2, Copy, Sparkles, ArrowDownLeft, Send, LineChart, Shield, Lock } from "lucide-react";
 
 export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) {
+  const [copied, setCopied] = useState(false);
+
+  const saveToClipboard = (text:string) => {
+   navigator.clipboard.writeText(text);
+   setCopied(true);
+   setTimeout(() => setCopied(false), 2000);
+  }
   return (
-    <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#09090b] text-zinc-900 dark:text-white">
+    <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#09090b] text-zinc-900 dark:text-white relative">
       <div className="flex-1 overflow-y-auto px-6 pt-12 pb-32 no-scrollbar">
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6">
@@ -28,8 +37,15 @@ export function WalletSuccessScreen({ onContinue }: { onContinue: () => void }) 
               <div className="text-zinc-500 dark:text-white/70 text-xs mb-1">Account Number</div>
               <div className="text-2xl font-bold tracking-wider">2074893156</div>
             </div>
-            <button className="w-10 h-10 rounded-xl bg-black/10 dark:bg-white/20 flex items-center justify-center hover:bg-black/20 dark:bg-white/30 transition-colors">
-              <Copy className="w-5 h-5 text-zinc-900 dark:text-white" />
+            <button 
+              onClick={() => saveToClipboard("2074893156")}
+              className="w-10 h-10 rounded-xl bg-black/10 dark:bg-white/20 flex items-center justify-center hover:bg-black/20 dark:bg-white/30 transition-colors"
+            >
+              {copied ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+              ) : (
+                <Copy className="w-5 h-5 text-zinc-900 dark:text-white" />
+              )}
             </button>
           </div>
           <div>

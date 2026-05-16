@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { ArrowRight, User, Tag, Phone, MapPin } from "lucide-react";
+import { ArrowRight, User, Tag, Phone, MapPin, Shield } from "lucide-react";
 
 interface PersonalInfoStepProps {
-  name: string;
-  setName: (v: string) => void;
+  firstName: string;
+  setFirstName: (v: string) => void;
+  lastName: string;
+  setLastName: (v: string) => void;
+  bvn: string;
+  setBvn: (v: string) => void;
   brandName: string;
   setBrandName: (v: string) => void;
   phone: string;
@@ -14,7 +18,7 @@ interface PersonalInfoStepProps {
 }
 
 export function PersonalInfoStep({
-  name, setName, brandName, setBrandName, phone, setPhone, location, setLocation, onNext
+  firstName, setFirstName, lastName, setLastName, bvn, setBvn, brandName, setBrandName, phone, setPhone, location, setLocation, onNext
 }: PersonalInfoStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -22,8 +26,14 @@ export function PersonalInfoStep({
     const newErrors: { [key: string]: string } = {};
     const phoneRegex = /^[0-9]{10,14}$/;
 
-    if (!name.trim()) {
-      newErrors.name = "Full Name is required";
+    if (!firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+    if (!lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+    if (!bvn.trim() || !/^\d{11}$/.test(bvn)) {
+      newErrors.bvn = "Valid 11-digit BVN is required";
     }
     
     if (!phone.trim()) {
@@ -60,19 +70,54 @@ export function PersonalInfoStep({
       </div>
 
       <div className="space-y-6 flex-1">
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
+              <User className="w-4 h-4 text-[#8b5cf6]" />
+              First Name
+            </label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First name"
+              className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.firstName ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
+            />
+            {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+          </div>
+          <div className="flex-1">
+            <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
+              <User className="w-4 h-4 text-[#8b5cf6]" />
+              Last Name
+            </label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last name"
+              className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.lastName ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
+            />
+            {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+          </div>
+        </div>
+
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-zinc-800 dark:text-zinc-200">
-            <User className="w-4 h-4 text-[#8b5cf6]" />
-            Full Name
+            <Shield className="w-4 h-4 text-[#8b5cf6]" />
+            BVN
           </label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your full name"
-            className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.name ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
+            value={bvn}
+            onChange={(e) => setBvn(e.target.value)}
+            placeholder="11-digit BVN"
+            maxLength={11}
+            className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.bvn ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
           />
-          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          {errors.bvn && <p className="text-red-500 text-xs mt-1">{errors.bvn}</p>}
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 leading-tight">
+            Your BVN is strictly required to securely register your wallet. We do not use it for any malicious purposes.
+          </p>
         </div>
 
         <div>
@@ -98,7 +143,8 @@ export function PersonalInfoStep({
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="080 1234 5678"
+            placeholder="08012345678"
+            maxLength={11}
             className={`w-full bg-zinc-50 dark:bg-[#18181b] border ${errors.phone ? 'border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6]'} rounded-xl py-4 px-4 outline-none transition-all`}
           />
           {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}

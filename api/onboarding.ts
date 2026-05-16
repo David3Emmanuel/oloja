@@ -6,9 +6,11 @@ export interface OnboardingRequestInterface {
   email?: string;
   password?: string;
   role: "find_jobs" | "hire_services" | null;
-  name: string;
+  firstName: string;
+  lastName: string;
   brandName?: string;
   phone: string;
+  bvn: string;
   location: string;
   languages: string[];
   skills: string[];
@@ -38,9 +40,11 @@ export const mockOnboardingRequest: OnboardingRequestInterface = {
   email: "user@example.com",
   password: "SecurePassword123!",
   role: "find_jobs",
-  name: "John Doe",
+  firstName: "John",
+  lastName: "Doe",
   brandName: "Doe Services",
   phone: "08012345678",
+  bvn: "12345678901",
   location: "Lagos, Nigeria",
   languages: ["English", "Yoruba"],
   skills: ["Tailoring", "Photography"],

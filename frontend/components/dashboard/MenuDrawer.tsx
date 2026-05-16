@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Briefcase, Wallet, Shield, User, X } from "lucide-react";
+import { Home, Briefcase, Wallet, Shield, User, X, MessageSquare, TrendingUp, Settings } from "lucide-react";
 import Link from "next/link";
 
 interface MenuDrawerProps {
@@ -47,21 +47,33 @@ export function MenuDrawer({ isOpen, onClose }: MenuDrawerProps) {
                 onClick={onClose}
               />
               <MenuItem
+                icon={<MessageSquare className="w-5 h-5" />}
+                label="Messages"
+                href="/messages"
+                onClick={onClose}
+              />
+              <MenuItem
                 icon={<Wallet className="w-5 h-5" />}
                 label="Wallet"
                 href="/wallet"
                 onClick={onClose}
               />
               <MenuItem
-                icon={<Shield className="w-5 h-5" />}
-                label="Trust"
-                href="/trust"
+                icon={<TrendingUp className="w-5 h-5" />}
+                label="Growth Hub"
+                href="/growth"
                 onClick={onClose}
               />
               <MenuItem
                 icon={<User className="w-5 h-5" />}
                 label="Profile"
                 href="/profile"
+                onClick={onClose}
+              />
+              <MenuItem
+                icon={<Settings className="w-5 h-5" />}
+                label="Settings"
+                href="/settings"
                 onClick={onClose}
               />
             </div>
