@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
-import { HttpModule } from '@nestjs/axios'
 import { OpportunitiesService } from './opportunities.service'
 import { OpportunitiesController } from './opportunities.controller'
+import { AiModule } from '../ai/ai.module'
 
 @Module({
-  imports: [HttpModule],
+  imports: [AiModule],
   providers: [OpportunitiesService],
   controllers: [OpportunitiesController],
 })

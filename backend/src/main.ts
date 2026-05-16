@@ -11,7 +11,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Oloja API')
-    .setDescription('Backend for Oloja — digital identity and gig matching for informal workers')
+    .setDescription(
+      'Backend for Oloja — digital identity and gig matching for informal workers',
+    )
     .setVersion('1.0')
     .build()
   const documentFactory = () => SwaggerModule.createDocument(app, config)

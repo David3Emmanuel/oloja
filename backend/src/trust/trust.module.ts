@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
-import { HttpModule } from '@nestjs/axios'
 import { TrustService } from './trust.service'
 import { TrustController } from './trust.controller'
 import { SquadModule } from '../squad/squad.module'
+import { AiModule } from '../ai/ai.module'
 
 @Module({
-  imports: [HttpModule, SquadModule],
+  imports: [SquadModule, AiModule],
   providers: [TrustService],
   controllers: [TrustController],
 })
